@@ -1,24 +1,29 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import {defineConfig, loadEnv} from 'vite';
+import { defineConfig } from 'vite';
 
-export default defineConfig(({mode}) => {
-  const env = loadEnv(mode, '.', '');
-  return {
-    plugins: [react(), tailwindcss()],
-    define: {
-      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+export default defineConfig({
+  // 1. Set the base path
+  // Use '/' if deploying to [username].github.io
+  // Use '/repo-name/' if deploying to a sub-repo test site
+  base: '/website-test/', 
+
+  plugins: [
+    react(),
+    tailwindcss(),
+  ],
+
+  resolve: {
+    alias: {
+      // Standardizes imports so you can use '@/' instead of relative paths like '../../'
+      '@': path.resolve(__dirname, './src'), 
     },
-    resolve: {
-      alias: {
-        '@': path.resolve(__dirname, '.'),
-      },
-    },
-    server: {
-      // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
-      hmr: process.env.DISABLE_HMR !== 'true',
-    },
-  };
+  },
+
+  build: {
+    // Ensures the final files are placed in a 'dist' folder for GitHub Pages
+    outDir: 'dist',
+  },
+
 });
