@@ -7,7 +7,7 @@ export default defineConfig({
   // 1. Set the base path
   // Use '/' if deploying to [username].github.io
   // Use '/repo-name/' if deploying to a sub-repo test site
-  base: '/website-test/', 
+  base: '/v2/', 
 
   plugins: [
     react(),
