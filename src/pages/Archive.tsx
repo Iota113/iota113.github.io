@@ -70,7 +70,7 @@ export const Archive: React.FC = () => {
                 <button
                   key={type}
                   onClick={() => setFilter(type)}
-                  className={`text-[10px] uppercase tracking-[0.1em] transition-all hover:opacity-100 flex-shrink-0 ${
+                  className={`text-[14px] uppercase tracking-[0.1em] transition-all hover:opacity-100 flex-shrink-0 ${
                     filter === type 
                       ? 'opacity-100 font-bold border-b-2 lg:border-b-0 lg:border-r-2 border-accent pb-1 lg:pb-0 lg:pr-2' 
                       : 'opacity-30'
@@ -133,7 +133,7 @@ const MediaCard: React.FC<{ item: ArchiveMedia }> = ({ item }) => {
             />
             <div className="absolute inset-0 bg-natural-text/50 opacity-0 transition-opacity duration-500 group-hover:opacity-100 flex items-center justify-center p-6 text-center backdrop-blur-[2px]">
                <div className="transform translate-y-4 transition-transform duration-500 group-hover:translate-y-0 text-natural-footer scale-90 group-hover:scale-100">
-                  <h4 className="text-lg font-serif italic mb-2">{item.title}</h4>
+                  <h4 className="text-lg font-serif italic mb-2 group-hover:text-white">{item.title}</h4>
                   <span className="text-[8px] uppercase tracking-[0.2em] opacity-80">{item.type}</span>
                </div>
             </div>

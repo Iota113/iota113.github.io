@@ -24,27 +24,63 @@
 */
 
 .theme-spring {
+  /* Colors */
   --color-natural-bg: #FFFDFE; 
+  --color-surface-bg: #FEF6F8; /* Light petal pink for cards/containers */
   --color-natural-text: #2A2526;
+  --color-text-muted: #7E6C71;
   --color-accent: #F4A7B9; /* Sakura Pink */
+  --color-secondary: #A8D8B9; /* Fresh Sprout Green */
+  --color-border: #F0D4DB;
+  
+  /* Form & Feel */
+  --radius-ui: 16px; /* Soft, blooming, rounded edges */
+  --shadow-ui: 0 4px 20px rgba(244, 167, 185, 0.15); /* Soft, airy, warm shadow */
 }
 
 .theme-summer {
+  /* Colors */
   --color-natural-bg: #FAF9F6; 
+  --color-surface-bg: #FFFFFF; /* Bright, stark white for high contrast */
   --color-natural-text: #2D2D2D;
+  --color-text-muted: #5A7184;
   --color-accent: #4E87B2; /* Nemophila Blue */
+  --color-secondary: #F2A65A; /* Sun Coral/Orange */
+  --color-border: #CBE1F0;
+  
+  /* Form & Feel */
+  --radius-ui: 8px; /* Balanced, standard energetic edges */
+  --shadow-ui: 0 8px 16px rgba(45, 45, 45, 0.12); /* Direct, harsh-sun drop shadow */
 }
 
 .theme-autumn {
+  /* Colors */
   --color-natural-bg: #FCFAED; 
+  --color-surface-bg: #F4EFE6; /* Cozy parchment paper feel */
   --color-natural-text: #2B2725;
+  --color-text-muted: #6B5B53;
   --color-accent: #C17C5D; /* Autumn Foliage */
+  --color-secondary: #D4A373; /* Golden Wheat */
+  --color-border: #E2D0C1;
+  
+  /* Form & Feel */
+  --radius-ui: 12px; /* Organic, comfortable rounding */
+  --shadow-ui: 0 4px 12px rgba(107, 91, 83, 0.2); /* Deep, earthy, grounding shadow */
 }
 
 .theme-winter {
+  /* Colors */
   --color-natural-bg: #F7FAFC; 
+  --color-surface-bg: #EEF3F8; /* Frosty, cool-toned surface */
   --color-natural-text: #26292D;
+  --color-text-muted: #788796;
   --color-accent: #8DA9C4; /* Ice Blue */
+  --color-secondary: #5C7C99; /* Deep Twilight Blue */
+  --color-border: #D3E0EA;
+  
+  /* Form & Feel */
+  --radius-ui: 0px; /* Sharp, crystalline edges (like ice) */
+  --shadow-ui: 0 2px 8px rgba(141, 169, 196, 0.25); /* Crisp, cool, tight shadow */
 }
 
 @layer base {
