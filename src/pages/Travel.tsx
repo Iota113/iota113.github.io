@@ -1,4 +1,4 @@
- import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import '../styles/travel.css';
 
@@ -126,7 +126,6 @@ export const Travel: React.FC = () => {
 
                             {/* Right Side: The Framed Image with Gradient Mask */}
                             <div className="w-full md:w-7/12 h-64 md:h-full relative">
-                                {/* Intense gradient fade to blend the image seamlessly into the dark UI */}
                                 <div className="absolute inset-0" />
                                 
                                 <motion.img 
