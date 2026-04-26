@@ -1,47 +1,41 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-
-// --- MOCK DATA ---
-const REGIONS = [
-    {
-        id: '1',
-        name: 'Liyue Harbor',
-        tagline: 'The City of Contracts',
-        description: 'A bustling port city glowing under the moonlight. The architecture features tiered crimson roofs and warm lanterns that reflect off the calm ocean waters, creating a striking contrast against the dark, starry sky above.',
-        mainImage: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=1000&auto=format&fit=crop', // Replace with your image
-        details: [
-            { title: 'Yujing Terrace', desc: 'Overlooking the harbor at midnight.', img: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=600&auto=format&fit=crop' }
-        ]
-    },
-    {
-        id: '2',
-        name: 'Grand Narukami',
-        tagline: 'Eternity in Bloom',
-        description: 'Perched high atop a mountain, bathed in an endless twilight. The air is thick with the scent of Sakura blossoms, drifting continuously in the cool night breeze under a massive, glowing moon.',
-        mainImage: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=1000&auto=format&fit=crop', // Replace with your image
-        details: [
-            { title: 'Sacred Sakura', desc: 'Petals falling like snow.', img: 'https://images.unsplash.com/photo-1515238152791-8216bfdf89a7?q=80&w=600&auto=format&fit=crop' }
-        ]
-    },
-    {
-        id: '3',
-        name: 'Belobog',
-        tagline: 'The Last Bastion',
-        description: 'A fortress of warmth against an eternal, howling blizzard. Bioluminescent auroras dance across the sky, casting an ethereal blue light over the frozen tracks of the Astral Express.',
-        mainImage: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?q=80&w=1000&auto=format&fit=crop', // Replace with your image
-        details: [
-            { title: 'Administrative District', desc: 'Snow-capped spires under the aurora.', img: 'https://images.unsplash.com/photo-1491555103944-7c647fd857e6?q=80&w=600&auto=format&fit=crop' }
-        ]
-    }
-];
+import { supabase, TravelRegion, TRAVEL_URL } from '../services/supabase';
 
 export const Travel: React.FC = () => {
-    const [activeRegionId, setActiveRegionId] = useState(REGIONS[0].id);
+    const [regions, setRegions] = useState<TravelRegion[]>([]);
+    const [activeRegionId, setActiveRegionId] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
 
-    const activeRegion = REGIONS.find(r => r.id === activeRegionId) || REGIONS[0];
+    useEffect(() => {
+        const fetchRegions = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from('travel_regions')
+                    .select('*')
+                    .order('sort_order', { ascending: true });
 
-    // Generate random stars for the background
+                if (error) throw error;
+
+                if (data && data.length > 0) {
+                    setRegions(data);
+                    setActiveRegionId(data[0].id);
+                }
+            } catch (err) {
+                console.error("Error fetching regions:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchRegions();
+    }, []);
+
+    const activeRegion = useMemo(() => {
+        return regions.find(r => r.id === activeRegionId) || null;
+    }, [regions, activeRegionId]);
+
     const stars = useMemo(() => {
         return Array.from({ length: 70 }).map((_, i) => ({
             id: i,
@@ -52,6 +46,16 @@ export const Travel: React.FC = () => {
             baseOpacity: Math.random() * 0.5 + 0.1,
         }));
     }, []);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-[#04080F] flex items-center justify-center">
+                <div className="text-sky-400 font-mono animate-pulse">Retrieving travel data...</div>
+            </div>
+        );
+    }
+
+    if (!activeRegion) return null;
 
     return (
         <div className="min-h-screen w-full bg-midnight-gradient text-slate-200 flex flex-col items-center justify-center p-4 md:p-8 font-sans overflow-hidden relative">
@@ -123,7 +127,6 @@ export const Travel: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Right Side: The Framed Image with Gradient Mask */}
                             <div className="w-full md:w-7/12 h-64 md:h-full relative">
                                 <div className="absolute inset-0" />
                                 
@@ -131,9 +134,9 @@ export const Travel: React.FC = () => {
                                     initial={{ scale: 1.05 }}
                                     animate={{ scale: 1 }}
                                     transition={{ duration: 10, ease: "linear", repeat: Infinity, repeatType: "reverse" }}
-                                    src={activeRegion.mainImage} 
+                                    src={`${TRAVEL_URL}/${activeRegion.cover_image_path}`}
                                     alt={activeRegion.name}
-                                    className="w-full h-full object-cover object-center mix-blend-lighten opacity-80"
+                                    className="w-full h-full object-cover object-center mix-blend-lighten"
                                 />
                             </div>
                         </motion.div>
@@ -142,23 +145,23 @@ export const Travel: React.FC = () => {
 
                 {/* --- BOTTOM THUMBNAIL NAVIGATION --- */}
                 <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide px-2">
-                    {REGIONS.map((region) => (
+                    {regions.map((region) => (
                         <button
                             key={region.id}
                             onClick={() => setActiveRegionId(region.id)}
                             className={`relative shrink-0 w-32 h-20 md:w-40 md:h-24 rounded-xl overflow-hidden border transition-all duration-500 ${
                                 activeRegionId === region.id 
                                 ? 'border-sky-400 shadow-[0_0_15px_rgba(56,189,248,0.5)] scale-100 opacity-100' 
-                                : 'border-white/10 opacity-40 hover:opacity-80 scale-95 hover:border-white/30'
+                                : 'border-white/10 opacity-80 hover:opacity-100 scale-95 hover:border-white/30'
                             }`}
                         >
                             <img 
-                                src={region.mainImage} 
+                                src={`${TRAVEL_URL}/${region.thumbnail_path}`} 
                                 alt={`Thumbnail ${region.name}`}
                                 className="w-full h-full object-cover"
                             />
                             <div className={`absolute inset-0 bg-[#080d17] transition-opacity duration-500 ${
-                                activeRegionId === region.id ? 'opacity-0' : 'opacity-60'
+                                activeRegionId === region.id ? 'opacity-10' : 'opacity-20'
                             }`} />
                         </button>
                     ))}
@@ -181,31 +184,26 @@ export const Travel: React.FC = () => {
                             transition={{ duration: 0.3, ease: "easeOut" }}
                             className="glass-panel w-full max-w-4xl max-h-[85vh] rounded-3xl overflow-hidden flex flex-col border border-sky-500/30"
                         >
-                            <div className="flex justify-between items-center p-6 border-b border-sky-500/20 bg-slate-900/50">
-                                <h2 className="text-2xl font-display text-sky-100 glow-text">{activeRegion.name} // ARCHIVE</h2>
-                                <button 
-                                    onClick={() => setIsModalOpen(false)}
-                                    className="text-slate-400 hover:text-sky-300 transition-colors text-2xl"
-                                >
-                                    ✕
-                                </button>
+                            <div className="sticky top-0 z-20 flex justify-between items-center p-6 border-b border-sky-500/20 bg-slate-900/80 backdrop-blur-md">
+                                <h2 className="text-2xl font-display text-sky-100 glow-text">{activeRegion.name}</h2>
+                                <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-sky-300 text-2xl">✕</button>
                             </div>
                             
-                            <div className="p-6 overflow-y-auto space-y-8 custom-scrollbar">
-                                {activeRegion.details.map((detail, idx) => (
-                                    <div key={idx} className="space-y-4">
-                                        <h3 className="text-xl font-bold text-sky-200">{detail.title}</h3>
-                                        <p className="text-slate-300 font-serif leading-relaxed">{detail.desc}</p>
-                                        <div className="relative rounded-2xl overflow-hidden border border-white/10 shadow-lg">
-                                            <img 
-                                                src={detail.img} 
-                                                alt={detail.title} 
-                                                className="w-full h-auto"
-                                            />
-                                        </div>
+                            <div className="p-8 space-y-8">
+                                {activeRegion.region_details?.map((block, idx) => (
+                                    <div key={idx} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                        {block.type === 'text' ? (
+                                            <p className="text-slate-300 leading-relaxed text-lg">{block.content}</p>
+                                        ) : (
+                                            <figure className="space-y-3">
+                                                <img src={block.url} alt={block.alt_text} className="w-full rounded-2xl border border-white/10 shadow-2xl" />
+                                                <figcaption className="text-center text-sm font-mono text-sky-400/60 uppercase tracking-widest">{block.caption}</figcaption>
+                                            </figure>
+                                        )}
                                     </div>
                                 ))}
                             </div>
+                    
                         </motion.div>
                     </motion.div>
                 )}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { supabase, ArchiveMedia, BUCKET_URL } from '../services/supabase';
+import { supabase, ArchiveMedia, ARCHIVE_URL } from '../services/supabase';
 
 export const Archive: React.FC = () => {
   const [items, setItems] = useState<ArchiveMedia[]>([]);
@@ -115,7 +115,7 @@ export const Archive: React.FC = () => {
 };
 
 const MediaCard: React.FC<{ item: ArchiveMedia }> = ({ item }) => {
-  const imageUrl = `${BUCKET_URL}${item.image_filename}`;
+  const imageUrl = `${ARCHIVE_URL}${item.image_filename}`;
 
   return (
     <motion.article 

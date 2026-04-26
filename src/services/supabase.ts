@@ -5,7 +5,9 @@ const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-export const BUCKET_URL = `${SUPABASE_URL}/storage/v1/object/public/archive-images/`;
+export const ARCHIVE_URL = `${SUPABASE_URL}/storage/v1/object/public/archive-images/`;
+export const TRAVEL_URL = `${SUPABASE_URL}/storage/v1/object/public/travel-assets`;
+
 
 export interface ArchiveMedia {
     id: string;
@@ -15,4 +17,29 @@ export interface ArchiveMedia {
     displayYear: string;
     image_filename: string;
     created_at: string;
+}
+
+// Define the specific structures for the JSONB blocks
+export type RegionDetailBlock =
+    | { 
+        type: 'text'; 
+        content: string; 
+      }
+    | { 
+        type: 'image'; 
+        url: string; 
+        caption: string; 
+        alt_text: string; 
+      };
+
+export interface TravelRegion {
+    id: string;
+    sort_order: number;
+    name: string;
+    tagline: string;
+    description: string;
+    cover_image_path: string;
+    thumbnail_path: string;
+    region_details: RegionDetailBlock[];
+    created_at?: string; 
 }
