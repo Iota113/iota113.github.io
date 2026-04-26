@@ -3,8 +3,7 @@ import { Github, Linkedin } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="h-24 px-[5%] border-t border-natural-border flex flex-col md:flex-row justify-between items-center bg-natural-footer transition-colors">
-      <div className="flex items-center gap-6">
+    <footer className="hidden md:flex h-24 px-[5%] border-t border-natural-border justify-between items-center bg-natural-footer transition-colors">      <div className="flex items-center gap-6">
         <span className="text-[10px] uppercase tracking-[0.15em] opacity-50">Reach out:</span>
         <div className="flex items-center gap-8">
           <a
