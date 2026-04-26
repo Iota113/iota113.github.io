@@ -1,20 +1,15 @@
 <div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+<img width="800" height="445" alt="image" src="https://github.com/user-attachments/assets/580ea54f-0063-413b-a8b4-ae333017eb5c" />
 </div>
 
-# Run and deploy your AI Studio app
+# Introducing v2
 
-This contains everything you need to run your app locally.
+v2 is a personal website built with React and Tailwind using Google AI Studio. It is a sandbox for me to experiment with UI ideas and incorporating elements from media I enjoy (e.g. the Monogatari Series).
 
-View your app in AI Studio: https://ai.studio/apps/a20618c2-cffa-4d01-b05a-64f91942ef54
+Its eventual purpose is to replace my current site (Iota113.github.io), which has gone through several iterations—from a janky but sincere first draft to a prettier but less unique redesign by adapting a template by Forty.
 
-## Run Locally
+In the age of AI where development is highly accelerated, I thought I'd try pushing the limits of what I can build with the assistance of LLMs like Claude and Gemini. 
 
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Known Issues
+- The homepage currently renders as a blank page on initial load.
+ - Temporary workaround: navigate directly to a subpage using the header
