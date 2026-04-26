@@ -13,13 +13,15 @@ import { Travel } from './pages/Travel';
 import { motion, AnimatePresence } from 'motion/react';
 
 export default function App() {
+  const basename = import.meta.env.MODE === 'production' ? '/v2' : '/';
+
   return (
     <SeasonProvider>
-      <Router>
+      <Router basename={basename}>
         <Layout>
           {/* Animated Route Transitions */}
           <AnimatePresence mode="wait">
-            <Routes>
+            <Routes location={location} key={location.pathname}>
               <Route path="/" element={<Home />} />
               <Route path="/archive" element={<Archive />} />
               <Route path="/projects" element={<Projects />} />

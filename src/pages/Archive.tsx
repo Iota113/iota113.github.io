@@ -43,36 +43,44 @@ export const Archive: React.FC = () => {
       {/* Hero */}
       <section className="px-[5%] py-24 relative overflow-hidden">
         <div className="mx-auto max-w-[1300px] relative z-10">
-          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent mb-4 block">Archive log</span>
+          <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent mb-4 block">Media log</span>
           <h1 className="text-6xl md:text-8xl font-light tracking-tighter leading-none mb-8">
-            Chronicles<span className="text-accent opacity-50">.</span>
+            The Archive<span className="text-accent opacity-50">.</span>
           </h1>
           <p className="max-w-xl text-natural-muted text-lg serif-italic leading-relaxed">
-            "A collection of media consumed throughout the seasons. Memories of summer spent in stories, and winters lost in music."
+            "Here I abandon my dignity by sharing my favourite games, shows and music."
           </p>
         </div>
       </section>
 
       {/* Main Content Area */}
       <div className="mx-auto max-w-[1300px] grid grid-cols-1 lg:grid-cols-[140px_1fr] gap-12 px-[5%] pb-32 items-start">
+
         {/* Sidebar */}
-        <aside className="sticky top-32 flex flex-col items-center gap-12 text-center lg:border-r lg:border-natural-border lg:pr-8">
-           <div className="space-y-8">
-             <label className="text-[10px] uppercase tracking-[0.3em] opacity-40 [writing-mode:vertical-lr] rotate-180 inline-block">Filter</label>
-             <div className="flex flex-col gap-4">
-               {uniqueTypes.map((type) => (
-                 <button
-                   key={type}
-                   onClick={() => setFilter(type)}
-                   className={`text-[10px] uppercase tracking-[0.1em] transition-all hover:opacity-100 ${
-                     filter === type ? 'opacity-100 font-bold border-r-2 border-accent pr-2' : 'opacity-30'
-                   }`}
-                 >
-                   {type}
-                 </button>
-               ))}
-             </div>
-           </div>
+        <aside className="sticky top-0 lg:top-32 z-40 flex flex-col items-center gap-4 lg:gap-12 text-center lg:border-r lg:border-natural-border lg:pr-8 bg-natural-bg/90 lg:bg-transparent backdrop-blur-md lg:backdrop-blur-none py-4 lg:py-0 -mx-[5%] px-[5%] lg:mx-0 lg:px-0 w-screen lg:w-auto">
+          <div className="flex lg:flex-col items-center lg:items-start space-x-6 lg:space-x-0 lg:space-y-8 w-full overflow-x-auto no-scrollbar">
+            
+            {/* Hide vertical label on mobile, show on desktop */}
+            <label className="hidden lg:inline-block text-[10px] uppercase tracking-[0.3em] opacity-40 [writing-mode:vertical-lr] rotate-180">
+              Filter
+            </label>
+            
+            <div className="flex flex-row lg:flex-col gap-6 lg:gap-4 w-max lg:w-auto">
+              {uniqueTypes.map((type) => (
+                <button
+                  key={type}
+                  onClick={() => setFilter(type)}
+                  className={`text-[10px] uppercase tracking-[0.1em] transition-all hover:opacity-100 flex-shrink-0 ${
+                    filter === type 
+                      ? 'opacity-100 font-bold border-b-2 lg:border-b-0 lg:border-r-2 border-accent pb-1 lg:pb-0 lg:pr-2' 
+                      : 'opacity-30'
+                  }`}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
+          </div>
         </aside>
 
         {/* Gallery */}

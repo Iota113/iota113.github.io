@@ -1,7 +1,35 @@
 import React from 'react';
-import { motion } from 'motion/react';
+import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
+import yotsugi from '../../images/yotsugi.webp';
 
 export const Home: React.FC = () => {
+  // 1. Setup Motion Values for mouse tracking (default to center: 0.5)
+  const mouseX = useMotionValue(0.5);
+  const mouseY = useMotionValue(0.5);
+
+  // 2. Add a spring physics configuration to make the movement fluid and buttery
+  const springConfig = { damping: 30, stiffness: 100 };
+  const smoothX = useSpring(mouseX, springConfig);
+  const smoothY = useSpring(mouseY, springConfig);
+
+  // 3. Map the normalized mouse position (0 to 1) to a pixel offset (-20px to 20px)
+  // We invert the output (20 to -20) so the image moves *away* from the mouse
+  const xOffset = useTransform(smoothX, [0, 1], [20, -20]);
+  const yOffset = useTransform(smoothY, [0, 1], [20, -20]);
+
+  // 4. Update coordinates on mouse move
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    mouseX.set((e.clientX - rect.left) / rect.width);
+    mouseY.set((e.clientY - rect.top) / rect.height);
+  };
+
+  // 5. Snap back to center when the mouse leaves
+  const handleMouseLeave = () => {
+    mouseX.set(0.5);
+    mouseY.set(0.5);
+  };
+
   return (
     <div className="mx-auto w-full min-h-screen flex flex-col relative overflow-hidden">
       {/* Decorative Blobs */}
@@ -26,27 +54,29 @@ export const Home: React.FC = () => {
 
         {/* Central Content */}
         <div className="flex-1 px-4 md:px-12 flex flex-col justify-center">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="relative w-full aspect-[21/9] bg-[#EAE7E0] border border-natural-border mb-12 flex items-center justify-center overflow-hidden"
+            <div 
+              className="relative w-full aspect-[21/9] mb-12 flex items-center justify-center overflow-hidden vignette-mask"
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
             >
+               {/* The motion.div applies the pan effect underneath the mask */}
                <motion.div 
-                 initial={{ scale: 1.1 }}
-                 animate={{ scale: 1 }}
-                 transition={{ duration: 2 }}
-                 className="w-full h-full opacity-80"
+                 initial={{ scale: 1.15, opacity: 0 }}
+                 // We keep the scale slightly above 1 so panning doesn't reveal the hard edges
+                 animate={{ scale: 1.05, opacity: 1 }} 
+                 transition={{ duration: 2.5, ease: "easeOut" }}
+                 style={{ x: xOffset, y: yOffset }}
+                 className="w-full h-full flex items-center justify-center"
                >
                  <img 
-                    src="images/yotsugi.webp" 
-                    alt="Yotsugi Ononoki" 
-                    className="w-full h-full object-contain"
+                    src={yotsugi}
+                    alt="Ononoki Yotsugi" 
+                    // Made the image slightly larger than the container so it has room to pan
+                    className="w-[110%] h-[110%] max-w-none object-cover opacity-90 hover:opacity-100 transition-opacity duration-700"
                   />
                </motion.div>
-               <div className="absolute top-6 left-6 bg-white/80 backdrop-blur-sm px-4 py-2 text-[10px] uppercase tracking-[0.2em] border border-natural-border">
-                 Scene: The Stillness
-               </div>
-            </motion.div>
+
+            </div>
 
             <section className="max-w-3xl space-y-8">
                <h1 className="text-4xl md:text-6xl font-light leading-tight tracking-tighter">
@@ -54,10 +84,12 @@ export const Home: React.FC = () => {
                </h1>
                <div className="text-lg md:text-xl leading-relaxed text-natural-muted serif-italic space-y-6">
                  <p>
-                   "Hi, my name is <span className="text-natural-text not-italic font-semibold border-b border-accent">Henry</span>. I am a year 2 Computer Science and Math student at the National University of Singapore. Everything changes when the wind turns cold, and I find myself dancing in the logic of math and algorithms."
+                   "Hi, my name is <span className="text-natural-text not-italic font-semibold border-b border-accent">Henry</span>. I am a year 2 Computer Science and Math student at the National University of Singapore. 
+                   My academic interests lie in pure math and CS areas like algorithms and AI."
                  </p>
                  <p className="opacity-80">
-                   "This is less of a portfolio, but more of a dialogue between the observer and the observed. Explore the <Link to="/archive" className="text-natural-text not-italic border-b border-accent/30 hover:border-accent group">Archive</Link> to see the chronicles I've gathered."
+                   "This is less of a portfolio, but more of a dialogue between the observer and the observed. 
+                   Explore the <Link to="/archive" className="text-natural-text not-italic border-b border-accent/30 hover:border-accent group">Archive</Link> to see the chronicles I've gathered."
                  </p>
                </div>
             </section>

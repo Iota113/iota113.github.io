@@ -7,31 +7,54 @@
   --font-display: "Space Grotesk", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 
-  /* Natural Tones Palette */
+  /* 1. Declare the keys so Tailwind creates the utility classes */
   --color-natural-bg: #FAF9F6;
   --color-natural-text: #2D2D2D;
   --color-natural-muted: #555555;
   --color-natural-border: rgba(45, 45, 45, 0.1);
   --color-natural-footer: #F2F1EC;
   
-  /* Seasonal Accents */
-  --color-autumn-terra: #C17C5D;
-  --color-autumn-sage: #8C9A6F;
-  --color-autumn-sand: #D4A373;
+  /* Default Fallback (Summer) */
+  --color-accent: #4E87B2; 
+}
 
-  --color-accent: var(--color-autumn-terra);
-  --color-accent-soft: rgba(193, 124, 93, 0.1);
-  --color-accent-bright: #D4A373;
+/* 2. Directly override the Tailwind CSS variables. 
+   This guarantees the utilities (like text-accent or bg-natural-bg) 
+   update flawlessly when the body class changes.
+*/
+
+.theme-spring {
+  --color-natural-bg: #FFFDFE; 
+  --color-natural-text: #2A2526;
+  --color-accent: #F4A7B9; /* Sakura Pink */
+}
+
+.theme-summer {
+  --color-natural-bg: #FAF9F6; 
+  --color-natural-text: #2D2D2D;
+  --color-accent: #4E87B2; /* Nemophila Blue */
+}
+
+.theme-autumn {
+  --color-natural-bg: #FCFAED; 
+  --color-natural-text: #2B2725;
+  --color-accent: #C17C5D; /* Autumn Foliage */
+}
+
+.theme-winter {
+  --color-natural-bg: #F7FAFC; 
+  --color-natural-text: #26292D;
+  --color-accent: #8DA9C4; /* Ice Blue */
 }
 
 @layer base {
   body {
-    @apply bg-natural-bg text-natural-text antialiased overflow-x-hidden;
+    @apply bg-natural-bg text-natural-text antialiased overflow-x-hidden transition-colors duration-700 ease-in-out;
     font-feature-settings: "ss01", "ss02", "cv01", "cv02";
   }
 
   h1, h2, h3, h4 {
-    @apply font-display tracking-tight text-natural-text;
+    @apply font-display tracking-tight text-natural-text transition-colors duration-700 ease-in-out;
   }
 }
 
@@ -41,7 +64,7 @@
 
 /* Background Decorative Elements */
 .bg-blob {
-  @apply absolute rounded-full blur-3xl opacity-20 pointer-events-none;
+  @apply absolute rounded-full blur-3xl opacity-20 pointer-events-none transition-colors duration-700;
 }
 
 /* UI Animations */
@@ -54,3 +77,20 @@
   animation: fadeIn 0.6s cubic-bezier(0.2, 1, 0.3, 1) forwards;
 }
 
+/* Ethereal Fading Edge Mask */
+.vignette-mask {
+  -webkit-mask-image: radial-gradient(
+    ellipse 60% 85% at 50% 50%,
+    rgba(0, 0, 0, 1) 30%,
+    rgba(0, 0, 0, 0.3) 65%,
+    rgba(0, 0, 0, 0) 80%,
+    transparent 70%
+  );
+  mask-image: radial-gradient(
+    ellipse 60% 85% at 50% 50%,
+    rgba(0, 0, 0, 1) 30%,
+    rgba(0, 0, 0, 0.3) 65%,
+    rgba(0, 0, 0, 0) 80%,
+    transparent 70%
+  );
+}
