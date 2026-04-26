@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Redirecting...</title>
+    <script>
+      // 1. Get the current URL path that caused the 404 (e.g., "/v2/archive")
+      const currentPath = window.location.pathname;
+      
+      // 2. Define your GitHub repository name (this is your base)
+      const repoName = '/v2';
+      
+      // 3. Make sure the path actually belongs to this repo
+      if (currentPath.startsWith(repoName)) {
+        // Extract the specific route the user wanted (e.g., "/archive")
+        const route = currentPath.substring(repoName.length);
+        
+        // 4. Force a redirect to the HashRouter format: /v2/#/archive
+        // We also append window.location.search just in case there are ?query parameters
+        window.location.replace(repoName + '/#' + route + window.location.search);
+      } else {
+        // Fallback safety redirect to the home page
+        window.location.replace(repoName + '/#/');
+      }
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
