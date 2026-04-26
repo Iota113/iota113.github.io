@@ -3,20 +3,20 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route} from 'react-router-dom';
 import { SeasonProvider } from './context/SeasonContext';
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
 import { Archive } from './pages/Archive';
 import { Projects } from './pages/Projects';
 import { Travel } from './pages/Travel';
-import { motion, AnimatePresence } from 'motion/react';
+import { AnimatePresence } from 'motion/react';
 
 export default function App() {
 
   return (
     <SeasonProvider>
-      <Router basename={import.meta.env.BASE_URL}>
+      <Router>
         <Layout>
           <AnimatePresence mode="wait">
             <Routes>
