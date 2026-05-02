@@ -124,24 +124,29 @@ const MediaCard: React.FC<{ item: ArchiveMedia }> = ({ item }) => {
       animate={{ opacity: 1 }}
       className="group relative"
     >
-      <div className="relative aspect-[3/4] overflow-hidden bg-[#EAE7E0] border border-natural-border p-2 transition-all duration-500 group-hover:shadow-[0_10px_30px_-10px_rgba(45,45,45,0.2)]">
-         <div className="relative h-full w-full overflow-hidden">
+      {/* Changed bg-[#EAE7E0] to bg-surface-bg and implemented rounded corners using the css variable */}
+      <div 
+        style={{ borderRadius: 'var(--radius-ui)' }}
+        className="relative aspect-[3/4] overflow-hidden bg-surface-bg border border-natural-border p-2 transition-all duration-500 shadow-ui group-hover:scale-[1.02]"
+      >
+         <div className="relative h-full w-full overflow-hidden" style={{ borderRadius: 'calc(var(--radius-ui) - 4px)' }}>
             <img 
               src={imageUrl} 
               alt={item.title} 
-              className="h-full w-full object-cover grayscale-[0.2] transition-transform duration-700 group-hover:scale-105 group-hover:grayscale-0"
+              // Removed the hardcoded grayscale, letting the seasonal theme dictate the vibrance naturally
+              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-natural-text/50 opacity-0 transition-opacity duration-500 group-hover:opacity-100 flex items-center justify-center p-6 text-center backdrop-blur-[2px]">
-               <div className="transform translate-y-4 transition-transform duration-500 group-hover:translate-y-0 text-natural-footer scale-90 group-hover:scale-100">
-                  <h4 className="text-lg font-serif italic mb-2 group-hover:text-white">{item.title}</h4>
+            <div className="absolute inset-0 bg-natural-text/80 opacity-0 transition-opacity duration-500 group-hover:opacity-100 flex items-center justify-center p-6 text-center backdrop-blur-sm">
+               <div className="transform translate-y-4 transition-transform duration-500 group-hover:translate-y-0 text-natural-bg scale-90 group-hover:scale-100">
+                  <h4 className="text-lg font-serif italic mb-2 group-hover:text-accent">{item.title}</h4>
                   <span className="text-[8px] uppercase tracking-[0.2em] opacity-80">{item.type}</span>
                </div>
             </div>
          </div>
       </div>
-      <div className="mt-4 flex justify-between items-baseline px-1">
-        <span className="text-[9px] uppercase tracking-[0.2em] opacity-40">{item.type}</span>
-        <span className="text-[8px] serif-italic opacity-30">{item.displayYear}</span>
+      <div className="mt-4 flex justify-between items-baseline px-1 text-natural-text">
+        <span className="text-[9px] uppercase tracking-[0.2em] opacity-60">{item.type}</span>
+        <span className="text-[8px] serif-italic opacity-50">{item.displayYear}</span>
       </div>
     </motion.article>
   );

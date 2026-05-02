@@ -7,80 +7,102 @@
   --font-display: "Space Grotesk", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 
-  /* 1. Declare the keys so Tailwind creates the utility classes */
   --color-natural-bg: #FAF9F6;
   --color-natural-text: #2D2D2D;
   --color-natural-muted: #555555;
   --color-natural-border: rgba(45, 45, 45, 0.1);
   --color-natural-footer: #F2F1EC;
   
-  /* Default Fallback (Summer) */
   --color-accent: #4E87B2; 
 }
 
-/* 2. Directly override the Tailwind CSS variables. 
-   This guarantees the utilities (like text-accent or bg-natural-bg) 
-   update flawlessly when the body class changes.
-*/
-
 .theme-spring {
-  /* Colors */
-  --color-natural-bg: #FFFDFE; 
-  --color-surface-bg: #FEF6F8; /* Light petal pink for cards/containers */
-  --color-natural-text: #2A2526;
-  --color-text-muted: #7E6C71;
-  --color-accent: #F4A7B9; /* Sakura Pink */
-  --color-secondary: #A8D8B9; /* Fresh Sprout Green */
-  --color-border: #F0D4DB;
-  
-  /* Form & Feel */
-  --radius-ui: 16px; /* Soft, blooming, rounded edges */
-  --shadow-ui: 0 4px 20px rgba(244, 167, 185, 0.15); /* Soft, airy, warm shadow */
+  --color-natural-bg:     #FFF8F9;
+  --color-surface-bg:     #FCF5F7;
+  --color-natural-text:   #3A2E32;
+  --color-text-muted:     #856B74;
+  --color-accent:         #E87A90;
+  --color-secondary:      #DFC94A;
+  --color-border:         #F0E1E5;
+
+  --radius-ui:  20px;
+  --shadow-ui:  0 4px 20px rgba(232, 122, 144, 0.12);
 }
 
 .theme-summer {
-  /* Colors */
-  --color-natural-bg: #FAF9F6; 
-  --color-surface-bg: #FFFFFF; /* Bright, stark white for high contrast */
-  --color-natural-text: #2D2D2D;
-  --color-text-muted: #5A7184;
-  --color-accent: #4E87B2; /* Nemophila Blue */
-  --color-secondary: #F2A65A; /* Sun Coral/Orange */
-  --color-border: #CBE1F0;
-  
-  /* Form & Feel */
-  --radius-ui: 8px; /* Balanced, standard energetic edges */
-  --shadow-ui: 0 8px 16px rgba(45, 45, 45, 0.12); /* Direct, harsh-sun drop shadow */
+  --color-natural-bg:     #F0FAF0;
+  --color-surface-bg:     #FFFFFF;
+  --color-natural-text:   #1A2E1A;
+  --color-text-muted:     #3D6030;
+  --color-accent:         #4D9E3A;
+  --color-secondary:      #A8D4E8;
+  --color-border:         #C0E0B8;
+
+  --radius-ui:  6px;
+  --shadow-ui:  0 2px 8px rgba(77, 158, 58, 0.10);
 }
 
 .theme-autumn {
-  /* Colors */
-  --color-natural-bg: #FCFAED; 
-  --color-surface-bg: #F4EFE6; /* Cozy parchment paper feel */
-  --color-natural-text: #2B2725;
-  --color-text-muted: #6B5B53;
-  --color-accent: #C17C5D; /* Autumn Foliage */
-  --color-secondary: #D4A373; /* Golden Wheat */
-  --color-border: #E2D0C1;
-  
-  /* Form & Feel */
-  --radius-ui: 12px; /* Organic, comfortable rounding */
-  --shadow-ui: 0 4px 12px rgba(107, 91, 83, 0.2); /* Deep, earthy, grounding shadow */
+  --color-natural-bg:     #1E1812;
+  --color-surface-bg:     #2A2018;
+  --color-natural-text:   #F2E7DC;
+  --color-text-muted:     #A8988F;
+  --color-accent:         #C8380C;
+  --color-secondary:      #E5A93C;
+  --color-border:         #3D2E20;
+
+  --radius-ui:  12px;
+  --shadow-ui:  0 6px 16px rgba(0, 0, 0, 0.30);
 }
 
 .theme-winter {
-  /* Colors */
-  --color-natural-bg: #F7FAFC; 
-  --color-surface-bg: #EEF3F8; /* Frosty, cool-toned surface */
-  --color-natural-text: #26292D;
-  --color-text-muted: #788796;
-  --color-accent: #8DA9C4; /* Ice Blue */
-  --color-secondary: #5C7C99; /* Deep Twilight Blue */
-  --color-border: #D3E0EA;
-  
-  /* Form & Feel */
-  --radius-ui: 0px; /* Sharp, crystalline edges (like ice) */
-  --shadow-ui: 0 2px 8px rgba(141, 169, 196, 0.25); /* Crisp, cool, tight shadow */
+  --color-natural-bg:     #07111E;
+  --color-surface-bg:     #0E1C30;
+  --color-natural-text:   #C8E0F0;
+  --color-text-muted:     #6A8CAA;
+  --color-accent:         #5ABCE8;
+  --color-secondary:      #E8C840;
+  --color-border:         #1E3550;
+
+  --radius-ui:  2px;
+  --shadow-ui:  0 0 20px rgba(90, 188, 232, 0.10);
+}
+
+.theme-winter body,
+.theme-winter .page-bg {
+  background-image:
+    radial-gradient(circle, rgba(90,188,232,0.055) 1px, transparent 1px),
+    radial-gradient(circle, rgba(90,188,232,0.03)  1px, transparent 1px);
+  background-size: 48px 48px, 24px 24px;
+  background-position: 0 0, 12px 12px;
+}
+
+.wipe-bar {
+  width: 100%;
+  flex: 1;
+  background-color: #1a1a1a; /* Match your theme background */
+  transform: scaleX(0); /* Start hidden */
+  transform-origin: left;
+  animation: horizontalWipe 1.2s cubic-bezier(0.87, 0, 0.13, 1) forwards;
+}
+
+@keyframes horizontalWipe {
+  0% {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  50% {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  51% {
+    transform: scaleX(1);
+    transform-origin: right;
+  }
+  100% {
+    transform: scaleX(0);
+    transform-origin: right;
+  }
 }
 
 @layer base {

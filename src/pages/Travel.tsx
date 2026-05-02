@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { supabase, TravelRegion, TRAVEL_URL } from '../services/supabase';
+import { useSeason } from '../context/SeasonContext';
 
 export const Travel: React.FC = () => {
+    const { season } = useSeason();
     const [regions, setRegions] = useState<TravelRegion[]>([]);
     const [activeRegionId, setActiveRegionId] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,83 +38,80 @@ export const Travel: React.FC = () => {
         return regions.find(r => r.id === activeRegionId) || null;
     }, [regions, activeRegionId]);
 
-    const stars = useMemo(() => {
-        return Array.from({ length: 70 }).map((_, i) => ({
+    const particles = useMemo(() => {
+        return Array.from({ length: 50 }).map((_, i) => ({
             id: i,
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
-            size: `${Math.random() * 3 + 1}px`,
-            duration: `${Math.random() * 3 + 2}s`,
-            baseOpacity: Math.random() * 0.5 + 0.1,
+            size: season === 'spring' || season === 'autumn' ? `${Math.random() * 6 + 4}px` : `${Math.random() * 3 + 1}px`,
+            duration: `${Math.random() * 4 + 3}s`,
+            baseOpacity: Math.random() * 0.5 + 0.2,
+            delay: `${Math.random() * 5}s`,
         }));
-    }, []);
+    }, [season]);
 
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-[#04080F] flex items-center justify-center">
-                <div className="text-sky-400 font-mono animate-pulse">Retrieving travel data...</div>
-            </div>
-        );
-    }
+    const getParticleStyle = () => {
+        switch(season) {
+            case 'spring': return { bg: 'bg-accent', rounded: 'rounded-[40%_60%_60%_40%]' }; 
+            case 'summer': return { bg: 'bg-secondary', rounded: 'rounded-full' }; 
+            case 'autumn': return { bg: 'bg-accent', rounded: 'rounded-sm rotate-45' }; 
+            case 'winter': return { bg: 'bg-white', rounded: 'rounded-full' };
+        }
+    };
 
+    if (loading) return <div className="min-h-screen bg-natural-bg flex items-center justify-center text-accent font-mono animate-pulse">Retrieving travel data...</div>;
     if (!activeRegion) return null;
 
+    const pStyle = getParticleStyle();
+
     return (
-        <div className="min-h-screen w-full bg-midnight-gradient text-slate-200 flex flex-col items-center justify-center p-4 md:p-8 font-sans overflow-hidden relative">
+        <div className="min-h-screen w-full bg-natural-bg text-natural-text flex flex-col items-center justify-center p-4 md:p-8 font-sans overflow-hidden relative transition-colors duration-700">
             
-            {/* Animated Starry Background */}
-            <div className="stars-container">
-                {stars.map(star => (
+            {/* Seasonal Background Particles */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 opacity-50">
+                {particles.map(p => (
                     <div 
-                        key={star.id}
-                        className="star"
+                        key={p.id}
+                        className={`absolute ${pStyle.bg} ${pStyle.rounded}`}
                         style={{
-                            left: star.left,
-                            top: star.top,
-                            width: star.size,
-                            height: star.size,
-                            '--duration': star.duration,
-                            '--base-opacity': star.baseOpacity
+                            left: p.left,
+                            top: p.top,
+                            width: p.size,
+                            height: p.size,
+                            opacity: p.baseOpacity,
+                            animation: `${season === 'winter' ? 'twinkle' : 'float'} ${p.duration} infinite ease-in-out alternate`,
+                            animationDelay: p.delay
                         } as React.CSSProperties}
                     />
                 ))}
-                {/* Large ambient glowing orbs */}
-                <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-500/10 blur-[150px]" />
-                <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-cyan-500/10 blur-[150px]" />
             </div>
 
             <div className="relative w-full max-w-7xl flex flex-col gap-6 z-10 mt-16 md:mt-0">
-                
-                {/* --- MAIN PRESENTATION CARD (Glassmorphism) --- */}
-                <div className="relative w-full min-h-[60vh] md:h-[70vh] glass-panel rounded-3xl overflow-hidden flex flex-col-reverse md:flex-row">
-                    
+                <div className="relative w-full min-h-[60vh] md:h-[70vh] bg-surface-bg border border-natural-border shadow-ui rounded-[var(--radius-ui)] overflow-hidden flex flex-col-reverse md:flex-row transition-all duration-700">
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={activeRegion.id}
                             initial={{ opacity: 0, filter: 'blur(10px)' }}
                             animate={{ opacity: 1, filter: 'blur(0px)' }}
                             exit={{ opacity: 0, filter: 'blur(10px)' }}
-                            transition={{ duration: 0.5, ease: "easeOut" }}
+                            transition={{ duration: 0.5 }}
                             className="w-full h-full flex flex-col-reverse md:flex-row"
                         >
-                            {/* Left Side: Information & Typography */}
                             <div className="w-full md:w-5/12 flex flex-col justify-center p-8 md:p-12 z-10 relative">
-                                
                                 <div className="mb-6 flex items-center gap-3 opacity-80">
-                                    <div className="w-8 h-[1px] bg-sky-400"></div>
-                                    <span className="font-mono text-xs uppercase tracking-[0.2em] text-sky-400">Memory Log</span>
+                                    <div className="w-8 h-[1px] bg-accent"></div>
+                                    <span className="font-mono text-xs uppercase tracking-[0.2em] text-accent">Memory Log</span>
                                 </div>
 
-                                <h1 className="text-4xl md:text-6xl font-display font-bold text-white mb-2 tracking-tight glow-text">
+                                <h1 className="text-4xl md:text-6xl font-display font-bold text-natural-text mb-2 tracking-tight">
                                     {activeRegion.name}
                                 </h1>
-                                <p className="text-lg font-serif italic text-sky-200 mb-8 opacity-90">
+                                <p className="text-lg font-serif italic text-text-muted mb-8">
                                     {activeRegion.tagline}
                                 </p>
 
-                                {/* Lore Box */}
-                                <div className="bg-slate-900/40 backdrop-blur-md border border-white/10 p-6 rounded-2xl mb-8 shadow-inner">
-                                    <p className="text-slate-300 leading-relaxed font-sans text-sm md:text-base">
+                                <div className="bg-natural-bg border border-natural-border p-6 rounded-[calc(var(--radius-ui)-4px)] mb-8 shadow-inner">
+                                    <p className="text-natural-text leading-relaxed font-sans text-sm md:text-base opacity-90">
                                         {activeRegion.description}
                                     </p>
                                 </div>
@@ -120,23 +119,21 @@ export const Travel: React.FC = () => {
                                 <div>
                                     <button
                                         onClick={() => setIsModalOpen(true)}
-                                        className="px-8 py-3 bg-sky-500/20 text-sky-100 font-mono uppercase tracking-widest text-sm rounded-full border border-sky-400/50 hover:bg-sky-500/40 hover:border-sky-300 transition-all duration-300 glow-button"
+                                        className="px-8 py-3 bg-transparent text-accent font-mono uppercase tracking-widest text-sm rounded-full border border-accent transition-all duration-300 hover:shadow-[0_0_20px_rgba(var(--color-accent-rgb),0.4)] hover:bg-accent/10 active:scale-95"
                                     >
                                         Extract Data
                                     </button>
                                 </div>
                             </div>
 
-                            <div className="w-full md:w-7/12 h-64 md:h-full relative">
-                                <div className="absolute inset-0" />
-                                
+                            <div className="w-full md:w-7/12 h-64 md:h-full relative overflow-hidden">
                                 <motion.img 
                                     initial={{ scale: 1.05 }}
                                     animate={{ scale: 1 }}
                                     transition={{ duration: 10, ease: "linear", repeat: Infinity, repeatType: "reverse" }}
                                     src={`${TRAVEL_URL}/${activeRegion.cover_image_path}`}
                                     alt={activeRegion.name}
-                                    className="w-full h-full object-cover object-center mix-blend-lighten"
+                                    className={`w-full h-full object-cover object-center ${season === 'winter' ? 'grayscale-[0.3]' : 'saturate-110'}`}
                                 />
                             </div>
                         </motion.div>
@@ -151,18 +148,15 @@ export const Travel: React.FC = () => {
                             onClick={() => setActiveRegionId(region.id)}
                             className={`relative shrink-0 w-32 h-20 md:w-40 md:h-24 rounded-xl overflow-hidden border transition-all duration-500 ${
                                 activeRegionId === region.id 
-                                ? 'border-sky-400 shadow-[0_0_15px_rgba(56,189,248,0.5)] scale-100 opacity-100' 
-                                : 'border-white/10 opacity-80 hover:opacity-100 scale-95 hover:border-white/30'
+                                ? 'border-accent shadow-ui scale-100 opacity-100' 
+                                : 'border-natural-border opacity-60 hover:opacity-100 scale-95'
                             }`}
                         >
                             <img 
                                 src={`${TRAVEL_URL}/${region.thumbnail_path}`} 
-                                alt={`Thumbnail ${region.name}`}
+                                alt={region.name}
                                 className="w-full h-full object-cover"
                             />
-                            <div className={`absolute inset-0 bg-[#080d17] transition-opacity duration-500 ${
-                                activeRegionId === region.id ? 'opacity-10' : 'opacity-20'
-                            }`} />
                         </button>
                     ))}
                 </div>
@@ -175,35 +169,37 @@ export const Travel: React.FC = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center bg-[#04080F]/80 backdrop-blur-xl p-4 md:p-8"
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-natural-text/40 backdrop-blur-xl p-4 md:p-8"
                     >
                         <motion.div 
                             initial={{ scale: 0.95, y: 20 }}
                             animate={{ scale: 1, y: 0 }}
                             exit={{ scale: 0.95, y: 20 }}
-                            transition={{ duration: 0.3, ease: "easeOut" }}
-                            className="glass-panel w-full max-w-4xl max-h-[85vh] rounded-3xl overflow-hidden flex flex-col border border-sky-500/30"
+                            className="bg-surface-bg w-full max-w-4xl max-h-[85vh] rounded-[var(--radius-ui)] overflow-hidden flex flex-col border border-natural-border shadow-ui"
                         >
-                            <div className="sticky top-0 z-20 flex justify-between items-center p-6 border-b border-sky-500/20 bg-slate-900/80 backdrop-blur-md">
-                                <h2 className="text-2xl font-display text-sky-100 glow-text">{activeRegion.name}</h2>
-                                <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-sky-300 text-2xl">✕</button>
+                            <div className="sticky top-0 z-20 flex justify-between items-center p-6 border-b border-natural-border bg-surface-bg/80 backdrop-blur-md">
+                                <h2 className="text-2xl font-display text-natural-text">{activeRegion.name}</h2>
+                                <button onClick={() => setIsModalOpen(false)} className="text-text-muted hover:text-accent text-2xl transition-colors">✕</button>
                             </div>
                             
-                            <div className="p-8 space-y-8">
+                            <div className="p-8 space-y-8 overflow-y-auto">
                                 {activeRegion.region_details?.map((block, idx) => (
-                                    <div key={idx} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                    <div key={idx}>
                                         {block.type === 'text' ? (
-                                            <p className="text-slate-300 leading-relaxed text-lg">{block.content}</p>
+                                            <p className="text-natural-text leading-relaxed text-lg opacity-90">{block.content}</p>
                                         ) : (
-                                            <figure className="space-y-3">
-                                                <img src={block.url} alt={block.alt_text} className="w-full rounded-2xl border border-white/10 shadow-2xl" />
-                                                <figcaption className="text-center text-sm font-mono text-sky-400/60 uppercase tracking-widest">{block.caption}</figcaption>
+                                            <figure className="space-y-3 flex flex-col items-center">
+                                                <img 
+                                                    src={block.url} 
+                                                    alt={block.alt_text} 
+                                                    className="w-full md:w-3/4 rounded-[calc(var(--radius-ui)-8px)] border border-natural-border shadow-lg" 
+                                                />
+                                                <figcaption className="text-center text-sm font-mono text-accent uppercase tracking-widest">{block.caption}</figcaption>
                                             </figure>
                                         )}
                                     </div>
                                 ))}
                             </div>
-                    
                         </motion.div>
                     </motion.div>
                 )}
