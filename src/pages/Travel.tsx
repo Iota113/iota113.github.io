@@ -1,52 +1,111 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { supabase, TravelRegion, TRAVEL_URL } from '../services/supabase';
+import { supabase, TRAVEL_URL } from '../services/supabase';
 import { useSeason } from '../context/SeasonContext';
+
+interface TravelPhoto {
+    id: string;
+    image_filename: string;
+    place: string;
+    city: string;
+    region: string; // Added region field
+    caption: string;
+    rating: number;
+    is_cover: boolean;
+    visited_at: string;
+}
 
 export const Travel: React.FC = () => {
     const { season } = useSeason();
-    const [regions, setRegions] = useState<TravelRegion[]>([]);
-    const [activeRegionId, setActiveRegionId] = useState<string | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [photos, setPhotos] = useState<TravelPhoto[]>([]);
+    const [selectedRegion, setSelectedRegion] = useState<string>('ALL');
+    const [selectedCity, setSelectedCity] = useState<string>('ALL');
+    const [activePhoto, setActivePhoto] = useState<TravelPhoto | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchRegions = async () => {
+        const fetchTravelData = async () => {
             try {
                 const { data, error } = await supabase
-                    .from('travel_regions')
+                    .from('travel_photos')
                     .select('*')
-                    .order('sort_order', { ascending: true });
+                    .order('visited_at', { ascending: false });
 
                 if (error) throw error;
-
-                if (data && data.length > 0) {
-                    setRegions(data);
-                    setActiveRegionId(data[0].id);
-                }
+                if (data) setPhotos(data);
             } catch (err) {
-                console.error("Error fetching regions:", err);
+                console.error("Error retrieving archives:", err);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchRegions();
+        fetchTravelData();
     }, []);
 
-    const activeRegion = useMemo(() => {
-        return regions.find(r => r.id === activeRegionId) || null;
-    }, [regions, activeRegionId]);
+    // Whenever the region changes, reset the chosen city to avoid orphaned selections
+    useEffect(() => {
+        setSelectedCity('ALL');
+    }, [selectedRegion]);
 
+    // 1. Dynamic Meta-Calculations
+
+    // Extract all unique regions
+    const regions = useMemo(() => {
+        const list = new Set(photos.map(p => p.region).filter(Boolean));
+        return ['ALL', ...Array.from(list)];
+    }, [photos]);
+
+    // Extract unique cities downstream of the selected region
+    const cities = useMemo(() => {
+        const relevantPhotos = selectedRegion === 'ALL' 
+            ? photos 
+            : photos.filter(p => p.region === selectedRegion);
+        
+        const list = new Set(relevantPhotos.map(p => p.city));
+        return ['ALL', ...Array.from(list)];
+    }, [photos, selectedRegion]);
+
+    const stats = useMemo(() => {
+        const uniquePlaces = new Set(photos.map(p => p.place)).size;
+        const uniqueCities = new Set(photos.map(p => p.city)).size;
+        const expLevel = Math.min(99, Math.max(1, uniquePlaces * 2 + uniqueCities * 5));
+        
+        return {
+            level: expLevel,
+            placesCount: uniquePlaces,
+            photosCount: photos.length
+        };
+    }, [photos]);
+
+    // Two-tier cascaded filtering logic
+    const filteredPhotos = useMemo(() => {
+        return photos.filter(p => {
+            const matchesRegion = selectedRegion === 'ALL' || p.region === selectedRegion;
+            const matchesCity = selectedCity === 'ALL' || p.city === selectedCity;
+            return matchesRegion && matchesCity;
+        });
+    }, [photos, selectedRegion, selectedCity]);
+
+    const renderStars = (rating: number) => {
+        const validRating = Math.max(0, Math.min(5, Math.floor(rating)));
+        return '★'.repeat(validRating) + '☆'.repeat(5 - validRating);
+    };
+
+    const getFullImageUrl = (filename: string) => {
+        return `${TRAVEL_URL}/${filename}`;
+    };
+
+    // 2. Decorative Ambient Engine
     const particles = useMemo(() => {
-        return Array.from({ length: 50 }).map((_, i) => ({
+        return Array.from({ length: 40 }).map((_, i) => ({
             id: i,
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
-            size: season === 'spring' || season === 'autumn' ? `${Math.random() * 6 + 4}px` : `${Math.random() * 3 + 1}px`,
-            duration: `${Math.random() * 4 + 3}s`,
-            baseOpacity: Math.random() * 0.5 + 0.2,
-            delay: `${Math.random() * 5}s`,
+            size: season === 'spring' || season === 'autumn' ? `${Math.random() * 5 + 3}px` : `${Math.random() * 3 + 1}px`,
+            duration: `${Math.random() * 5 + 4}s`,
+            baseOpacity: Math.random() * 0.4 + 0.1,
+            delay: `${Math.random() * 4}s`,
         }));
     }, [season]);
 
@@ -59,16 +118,25 @@ export const Travel: React.FC = () => {
         }
     };
 
-    if (loading) return <div className="min-h-screen bg-natural-bg flex items-center justify-center text-accent font-mono animate-pulse">Retrieving travel data...</div>;
-    if (!activeRegion) return null;
+    if (loading) return <div className="min-h-screen bg-natural-bg flex items-center justify-center text-accent font-mono animate-pulse">Synchronizing Travel Compendium...</div>;
 
     const pStyle = getParticleStyle();
 
+    const getCardBgStyle = () => {
+        switch(season) {
+            case 'spring': return 'bg-rose-50';
+            case 'summer': return 'bg-sky-50';
+            case 'autumn': return 'bg-stone-900 dark';
+            case 'winter': return 'bg-slate-900 dark';
+            default: return 'bg-zinc-900';
+        }
+    };
+
     return (
-        <div className="min-h-screen w-full bg-natural-bg text-natural-text flex flex-col items-center justify-center p-4 md:p-8 font-sans overflow-hidden relative transition-colors duration-700">
+        <div className="min-h-screen w-full bg-natural-bg text-natural-text flex flex-col items-center pt-24 pb-16 px-4 md:px-8 font-sans overflow-hidden relative transition-colors duration-700">
             
-            {/* Seasonal Background Particles */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 opacity-50">
+            {/* Ambient Background Grid & Particles */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 opacity-40">
                 {particles.map(p => (
                     <div 
                         key={p.id}
@@ -86,119 +154,178 @@ export const Travel: React.FC = () => {
                 ))}
             </div>
 
-            <div className="relative w-full max-w-7xl flex flex-col gap-6 z-10 mt-16 md:mt-0">
-                <div className="relative w-full min-h-[60vh] md:h-[70vh] bg-surface-bg border border-natural-border shadow-ui rounded-[var(--radius-ui)] overflow-hidden flex flex-col-reverse md:flex-row transition-all duration-700">
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={activeRegion.id}
-                            initial={{ opacity: 0, filter: 'blur(10px)' }}
-                            animate={{ opacity: 1, filter: 'blur(0px)' }}
-                            exit={{ opacity: 0, filter: 'blur(10px)' }}
-                            transition={{ duration: 0.5 }}
-                            className="w-full h-full flex flex-col-reverse md:flex-row"
-                        >
-                            <div className="w-full md:w-5/12 flex flex-col justify-center p-8 md:p-12 z-10 relative">
-                                <div className="mb-6 flex items-center gap-3 opacity-80">
-                                    <div className="w-8 h-[1px] bg-accent"></div>
-                                    <span className="font-mono text-xs uppercase tracking-[0.2em] text-accent">Memory Log</span>
-                                </div>
-
-                                <h1 className="text-4xl md:text-6xl font-display font-bold text-natural-text mb-2 tracking-tight">
-                                    {activeRegion.name}
-                                </h1>
-                                <p className="text-lg font-serif italic text-text-muted mb-8">
-                                    {activeRegion.tagline}
+            <div className="w-full max-w-6xl z-10 flex flex-col gap-8">
+                
+                {/* --- MASTER STATUS BANNER --- */}
+                <div className="w-full bg-surface-bg border border-natural-border shadow-ui rounded-[var(--radius-ui)] p-6 md:p-8 flex flex-col gap-6 relative overflow-hidden">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 w-full">
+                        <div className="flex items-center gap-6">
+                            <div className="w-16 h-16 rounded-full border-2 border-accent flex flex-col items-center justify-center bg-natural-bg font-mono shadow-md">
+                                <span className="text-[10px] uppercase opacity-60 leading-none">LV</span>
+                                <span className="text-2xl font-bold tracking-tighter text-accent">{stats.level}</span>
+                            </div>
+                            <div>
+                                <h1 className="text-2xl font-display font-bold tracking-tight">Travel Compendium</h1>
+                                <p className="text-xs font-mono text-text-muted mt-1 uppercase tracking-wider">
+                                    {stats.placesCount} Points of Interest
                                 </p>
+                            </div>
+                        </div>
+                    </div>
 
-                                <div className="bg-natural-bg border border-natural-border p-6 rounded-[calc(var(--radius-ui)-4px)] mb-8 shadow-inner">
-                                    <p className="text-natural-text leading-relaxed font-sans text-sm md:text-base opacity-90">
-                                        {activeRegion.description}
-                                    </p>
-                                </div>
+                    <hr className="border-natural-border/40" />
 
-                                <div>
+                    {/* Dual Tier Filtering UI */}
+                    <div className="flex flex-col gap-4">
+                        {/* 1st Tier: Regions */}
+                        <div className="flex flex-col gap-1.5">
+                            <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted">Region:</span>
+                            <div className="flex flex-wrap gap-2">
+                                {regions.map((region) => (
                                     <button
-                                        onClick={() => setIsModalOpen(true)}
-                                        className="px-8 py-3 bg-transparent text-accent font-mono uppercase tracking-widest text-sm rounded-full border border-accent transition-all duration-300 hover:shadow-[0_0_20px_rgba(var(--color-accent-rgb),0.4)] hover:bg-accent/10 active:scale-95"
+                                        key={region}
+                                        onClick={() => setSelectedRegion(region)}
+                                        className={`px-3 py-1 rounded-full font-mono text-[11px] uppercase tracking-wider border transition-all duration-300 ${
+                                            selectedRegion === region
+                                                ? 'bg-accent text-white border-accent shadow-sm'
+                                                : 'bg-natural-bg text-text-muted border-natural-border hover:border-accent/40'
+                                        }`}
                                     >
-                                        Extract Data
+                                        {region}
                                     </button>
-                                </div>
+                                ))}
                             </div>
+                        </div>
 
-                            <div className="w-full md:w-7/12 h-64 md:h-full relative overflow-hidden">
-                                <motion.img 
-                                    initial={{ scale: 1.05 }}
-                                    animate={{ scale: 1 }}
-                                    transition={{ duration: 10, ease: "linear", repeat: Infinity, repeatType: "reverse" }}
-                                    src={`${TRAVEL_URL}/${activeRegion.cover_image_path}`}
-                                    alt={activeRegion.name}
-                                    className={`w-full h-full object-cover object-center ${season === 'winter' ? 'grayscale-[0.3]' : 'saturate-110'}`}
-                                />
+                        {/* 2nd Tier: Cities (Filtered down by chosen region) */}
+                        <div className="flex flex-col gap-1.5">
+                            <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted">City:</span>
+                            <div className="flex flex-wrap gap-2">
+                                {cities.map((city) => (
+                                    <button
+                                        key={city}
+                                        onClick={() => setSelectedCity(city)}
+                                        className={`px-3 py-1 rounded-full font-mono text-[11px] uppercase tracking-wider border transition-all duration-300 ${
+                                            selectedCity === city
+                                                ? 'bg-accent/20 text-accent border-accent/40'
+                                                : 'bg-natural-bg/50 text-text-muted border-natural-border/60 hover:border-accent/30'
+                                        }`}
+                                    >
+                                        {city}
+                                    </button>
+                                ))}
                             </div>
-                        </motion.div>
-                    </AnimatePresence>
+                        </div>
+                    </div>
                 </div>
 
-                {/* --- BOTTOM THUMBNAIL NAVIGATION --- */}
-                <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide px-2">
-                    {regions.map((region) => (
-                        <button
-                            key={region.id}
-                            onClick={() => setActiveRegionId(region.id)}
-                            className={`relative shrink-0 w-32 h-20 md:w-40 md:h-24 rounded-xl overflow-hidden border transition-all duration-500 ${
-                                activeRegionId === region.id 
-                                ? 'border-accent shadow-ui scale-100 opacity-100' 
-                                : 'border-natural-border opacity-60 hover:opacity-100 scale-95'
-                            }`}
-                        >
-                            <img 
-                                src={`${TRAVEL_URL}/${region.thumbnail_path}`} 
-                                alt={region.name}
-                                className="w-full h-full object-cover"
-                            />
-                        </button>
-                    ))}
+                {/* --- COMPENDIUM MATRIX / PHOTO GRID --- */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
+                    <AnimatePresence mode="popLayout">
+                        {filteredPhotos.map((photo) => (
+                            <motion.div
+                                layout
+                                key={photo.id}
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.9 }}
+                                transition={{ duration: 0.3 }}
+                                onClick={() => setActivePhoto(photo)}
+                                className="group relative bg-surface-bg border border-natural-border hover:border-accent/50 rounded-[var(--radius-ui)] overflow-hidden cursor-pointer shadow-sm hover:shadow-ui transition-all duration-300 flex flex-col"
+                            >
+                                <div className="aspect-[4/5] w-full bg-natural-bg relative overflow-hidden border-b border-natural-border/60">
+                                    <img 
+                                        src={getFullImageUrl(photo.image_filename)} 
+                                        alt={photo.place}
+                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                        loading="lazy"
+                                    />
+                                    {photo.is_cover && (
+                                        <div className="absolute top-2 left-2 px-2 py-0.5 bg-accent text-white font-mono text-[9px] rounded-sm tracking-widest uppercase">
+                                            Signature
+                                        </div>
+                                    )}
+                                    <div className="absolute bottom-2 right-2 px-2 py-0.5 font-mono text-[10px] rounded-sm border border-accent/25 bg-surface-bg/80 text-accent backdrop-blur-sm tracking-tight font-semibold">
+                                        {renderStars(photo.rating)}
+                                    </div>
+                                </div>
+
+                                <div className="p-3 flex flex-col gap-0.5 bg-surface-bg">
+                                    <div className="flex justify-between items-center text-[10px] font-mono text-text-muted uppercase tracking-wider">
+                                        <span>{photo.city}</span>
+                                        <span className="opacity-50 text-[9px]">{photo.region}</span>
+                                    </div>
+                                    <h3 className="text-base font-display font-semibold truncate group-hover:text-accent transition-colors">{photo.place}</h3>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
                 </div>
             </div>
 
-            {/* --- DETAILED VIEW MODAL --- */}
+            {/* --- INSPECT MODAL --- */}
             <AnimatePresence>
-                {isModalOpen && activeRegion && (
+                {activePhoto && (
                     <motion.div 
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[100] flex items-center justify-center bg-natural-text/40 backdrop-blur-xl p-4 md:p-8"
+                        onClick={() => setActivePhoto(null)}
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-natural-text/30 backdrop-blur-md p-4"
                     >
                         <motion.div 
-                            initial={{ scale: 0.95, y: 20 }}
+                            initial={{ scale: 0.95, y: 15 }}
                             animate={{ scale: 1, y: 0 }}
-                            exit={{ scale: 0.95, y: 20 }}
-                            className="bg-surface-bg w-full max-w-4xl max-h-[85vh] rounded-[var(--radius-ui)] overflow-hidden flex flex-col border border-natural-border shadow-ui"
+                            exit={{ scale: 0.95, y: 15 }}
+                            onClick={(e) => e.stopPropagation()}
+                            className={`${getCardBgStyle()} w-full max-w-3xl rounded-[var(--radius-ui)] overflow-hidden border border-natural-border shadow-ui flex flex-col md:flex-row h-auto max-h-[90vh] md:h-[500px]`}
                         >
-                            <div className="sticky top-0 z-20 flex justify-between items-center p-6 border-b border-natural-border bg-surface-bg/80 backdrop-blur-md">
-                                <h2 className="text-2xl font-display text-natural-text">{activeRegion.name}</h2>
-                                <button onClick={() => setIsModalOpen(false)} className="text-text-muted hover:text-accent text-2xl transition-colors">✕</button>
+                            <div className="w-full md:w-3/5 h-[300px] md:h-full bg-black relative">
+                                <img 
+                                    src={getFullImageUrl(activePhoto.image_filename)} 
+                                    alt={activePhoto.place} 
+                                    className="w-full h-full object-contain md:object-cover"
+                                />
                             </div>
                             
-                            <div className="p-8 space-y-8 overflow-y-auto">
-                                {activeRegion.region_details?.map((block, idx) => (
-                                    <div key={idx}>
-                                        {block.type === 'text' ? (
-                                            <p className="text-natural-text leading-relaxed text-lg opacity-90">{block.content}</p>
-                                        ) : (
-                                            <figure className="space-y-3 flex flex-col items-center">
-                                                <img 
-                                                    src={block.url} 
-                                                    alt={block.alt_text} 
-                                                    className="w-full md:w-3/4 rounded-[calc(var(--radius-ui)-8px)] border border-natural-border shadow-lg" 
-                                                />
-                                                <figcaption className="text-center text-sm font-mono text-accent uppercase tracking-widest">{block.caption}</figcaption>
-                                            </figure>
-                                        )}
+                            <div className="w-full md:w-2/5 p-6 md:p-8 flex flex-col justify-between border-t md:border-t-0 md:border-l border-natural-border overflow-y-auto bg-surface-bg"
+                                style={{backgroundColor: 'color-mix(in srgb, var(--surface-bg) 95%, black)'}}
+                            >
+                                <div className="space-y-4">
+                                    <div className="flex justify-between items-center">
+                                        <span className="font-mono text-xs text-accent uppercase tracking-widest">Log Entry</span>
+                                        <button 
+                                            onClick={() => setActivePhoto(null)} 
+                                            className="text-text-muted hover:text-accent text-xl transition-colors font-mono"
+                                        >
+                                            ✕
+                                        </button>
                                     </div>
-                                ))}
+
+                                    <div>
+                                        <h2 className="text-3xl font-display font-bold tracking-tight text-natural-text">{activePhoto.place}</h2>
+                                        <p className="text-sm font-mono text-text-muted mt-0.5 uppercase tracking-wider">
+                                            {activePhoto.city} <span className="mx-1 opacity-45">//</span> {activePhoto.region}
+                                        </p>
+                                    </div>
+
+                                    <div className="h-[1px] bg-natural-border"></div>
+
+                                    <p className="text-sm leading-relaxed text-natural-text font-serif">
+                                        {activePhoto.caption}
+                                    </p>
+                                </div>
+
+                                <div className="mt-8 pt-4 border-t border-natural-border/60 space-y-2 font-mono text-[11px] text-text-muted">
+                                    <div className="flex justify-between">
+                                        <span>Visited:</span>
+                                        <span className="text-natural-text">{activePhoto.visited_at}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span>Score:</span>
+                                        <span className="text-accent text-[9px] tracking-tighter">{renderStars(activePhoto.rating)}</span>
+                                    </div>
+                                </div>
                             </div>
                         </motion.div>
                     </motion.div>

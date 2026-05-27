@@ -6,7 +6,7 @@ const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export const ARCHIVE_URL = `${SUPABASE_URL}/storage/v1/object/public/archive-images/`;
-export const TRAVEL_URL = `${SUPABASE_URL}/storage/v1/object/public/travel-assets`;
+export const TRAVEL_URL = `${SUPABASE_URL}/storage/v1/object/public/travel-images`;
 
 
 export interface ArchiveMedia {
