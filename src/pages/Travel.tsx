@@ -6,9 +6,10 @@ import { useSeason } from '../context/SeasonContext';
 interface TravelPhoto {
     id: string;
     image_filename: string;
+    additional_images?: string[]; // Added to support multiple images per place
     place: string;
     city: string;
-    region: string; // Added region field
+    region: string;
     caption: string;
     rating: number;
     is_cover: boolean;
@@ -21,6 +22,7 @@ export const Travel: React.FC = () => {
     const [selectedRegion, setSelectedRegion] = useState<string>('ALL');
     const [selectedCity, setSelectedCity] = useState<string>('ALL');
     const [activePhoto, setActivePhoto] = useState<TravelPhoto | null>(null);
+    const [activeImageIndex, setActiveImageIndex] = useState<number>(0); // Added for modal sidebar tracking
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -49,14 +51,11 @@ export const Travel: React.FC = () => {
     }, [selectedRegion]);
 
     // 1. Dynamic Meta-Calculations
-
-    // Extract all unique regions
     const regions = useMemo(() => {
         const list = new Set(photos.map(p => p.region).filter(Boolean));
         return ['ALL', ...Array.from(list)];
     }, [photos]);
 
-    // Extract unique cities downstream of the selected region
     const cities = useMemo(() => {
         const relevantPhotos = selectedRegion === 'ALL' 
             ? photos 
@@ -132,6 +131,11 @@ export const Travel: React.FC = () => {
         }
     };
 
+    // Compute active photo image collection outside of JSX to prevent syntax blocks
+    const currentModalImages = activePhoto 
+        ? [activePhoto.image_filename, ...(activePhoto.additional_images || [])]
+        : [];
+
     return (
         <div className="min-h-screen w-full bg-natural-bg text-natural-text flex flex-col items-center pt-24 pb-16 px-4 md:px-8 font-sans overflow-hidden relative transition-colors duration-700">
             
@@ -154,7 +158,7 @@ export const Travel: React.FC = () => {
                 ))}
             </div>
 
-            <div className="w-full max-w-6xl z-10 flex flex-col gap-8">
+            <div className="w-full max-w-[1400px] xl:max-w-[85vw] z-10 flex flex-col gap-8">
                 
                 {/* --- MASTER STATUS BANNER --- */}
                 <div className="w-full bg-surface-bg border border-natural-border shadow-ui rounded-[var(--radius-ui)] p-6 md:p-8 flex flex-col gap-6 relative overflow-hidden">
@@ -197,7 +201,7 @@ export const Travel: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* 2nd Tier: Cities (Filtered down by chosen region) */}
+                        {/* 2nd Tier: Cities */}
                         <div className="flex flex-col gap-1.5">
                             <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted">City:</span>
                             <div className="flex flex-wrap gap-2">
@@ -220,7 +224,7 @@ export const Travel: React.FC = () => {
                 </div>
 
                 {/* --- COMPENDIUM MATRIX / PHOTO GRID --- */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-6">
                     <AnimatePresence mode="popLayout">
                         {filteredPhotos.map((photo) => (
                             <motion.div
@@ -230,7 +234,10 @@ export const Travel: React.FC = () => {
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.9 }}
                                 transition={{ duration: 0.3 }}
-                                onClick={() => setActivePhoto(photo)}
+                                onClick={() => {
+                                    setActivePhoto(photo);
+                                    setActiveImageIndex(0); // Reset sidebar view to first image
+                                }}
                                 className="group relative bg-surface-bg border border-natural-border hover:border-accent/50 rounded-[var(--radius-ui)] overflow-hidden cursor-pointer shadow-sm hover:shadow-ui transition-all duration-300 flex flex-col"
                             >
                                 <div className="aspect-[4/5] w-full bg-natural-bg relative overflow-hidden border-b border-natural-border/60">
@@ -265,72 +272,111 @@ export const Travel: React.FC = () => {
 
             {/* --- INSPECT MODAL --- */}
             <AnimatePresence>
-                {activePhoto && (
-                    <motion.div 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={() => setActivePhoto(null)}
-                        className="fixed inset-0 z-[100] flex items-center justify-center bg-natural-text/30 backdrop-blur-md p-4"
-                    >
-                        <motion.div 
-                            initial={{ scale: 0.95, y: 15 }}
-                            animate={{ scale: 1, y: 0 }}
-                            exit={{ scale: 0.95, y: 15 }}
-                            onClick={(e) => e.stopPropagation()}
-                            className={`${getCardBgStyle()} w-full max-w-3xl rounded-[var(--radius-ui)] overflow-hidden border border-natural-border shadow-ui flex flex-col md:flex-row h-auto max-h-[90vh] md:h-[500px]`}
-                        >
-                            <div className="w-full md:w-3/5 h-[300px] md:h-full bg-black relative">
-                                <img 
-                                    src={getFullImageUrl(activePhoto.image_filename)} 
-                                    alt={activePhoto.place} 
-                                    className="w-full h-full object-contain md:object-cover"
-                                />
-                            </div>
-                            
-                            <div className="w-full md:w-2/5 p-6 md:p-8 flex flex-col justify-between border-t md:border-t-0 md:border-l border-natural-border overflow-y-auto bg-surface-bg"
-                                style={{backgroundColor: 'color-mix(in srgb, var(--surface-bg) 95%, black)'}}
-                            >
-                                <div className="space-y-4">
-                                    <div className="flex justify-between items-center">
-                                        <span className="font-mono text-xs text-accent uppercase tracking-widest">Log Entry</span>
-                                        <button 
-                                            onClick={() => setActivePhoto(null)} 
-                                            className="text-text-muted hover:text-accent text-xl transition-colors font-mono"
-                                        >
-                                            ✕
-                                        </button>
-                                    </div>
+                {activePhoto && (() => {
+                    const currentModalImages = [
+                        activePhoto.image_filename,
+                        ...(activePhoto.additional_images || [])
+                    ];
 
-                                    <div>
-                                        <h2 className="text-3xl font-display font-bold tracking-tight text-natural-text">{activePhoto.place}</h2>
-                                        <p className="text-sm font-mono text-text-muted mt-0.5 uppercase tracking-wider">
-                                            {activePhoto.city} <span className="mx-1 opacity-45">//</span> {activePhoto.region}
+                    return (
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setActivePhoto(null)}
+                            className="fixed inset-0 z-[100] flex items-center justify-center bg-natural-text/30 backdrop-blur-md p-4"
+                        >
+                            <motion.div 
+                                initial={{ scale: 0.95, y: 15 }}
+                                animate={{ scale: 1, y: 0 }}
+                                exit={{ scale: 0.95, y: 15 }}
+                                onClick={(e) => e.stopPropagation()}
+                                className={`${getCardBgStyle()} w-full max-w-4xl rounded-[var(--radius-ui)] overflow-hidden border border-natural-border shadow-ui flex flex-col md:flex-row h-auto max-h-[90vh] md:h-[550px]`}
+                            >
+                                {/* MEDIA VIEWPORT (Now completely clean and dedicated to the active image) */}
+                                <div className="w-full md:w-3/5 h-[300px] md:h-full bg-black relative flex items-center justify-center">
+                                    <motion.img 
+                                        key={activeImageIndex}
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{ duration: 0.2 }}
+                                        src={getFullImageUrl(currentModalImages[activeImageIndex] || activePhoto.image_filename)} 
+                                        alt={activePhoto.place} 
+                                        className="w-full h-full object-contain md:object-cover"
+                                    />
+                                </div>
+                                
+                                {/* DETAIL TEXT DATA + SIDEBAR GALLERY */}
+                                <div className="w-full md:w-2/5 p-6 md:p-8 flex flex-col justify-between border-t md:border-t-0 md:border-l border-natural-border overflow-y-auto bg-surface-bg"
+                                    style={{backgroundColor: 'color-mix(in srgb, var(--surface-bg) 95%, black)'}}
+                                >
+                                    <div className="space-y-4">
+                                        <div className="flex justify-between items-center">
+                                            <span className="font-mono text-xs text-accent uppercase tracking-widest">
+                                                Log Entry {currentModalImages.length > 1 && `(${activeImageIndex + 1}/${currentModalImages.length})`}
+                                            </span>
+                                            <button 
+                                                onClick={() => setActivePhoto(null)} 
+                                                className="text-text-muted hover:text-accent text-xl transition-colors font-mono"
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
+
+                                        <div>
+                                            <h2 className="text-3xl font-display font-bold tracking-tight text-natural-text">{activePhoto.place}</h2>
+                                            <p className="text-sm font-mono text-text-muted mt-0.5 uppercase tracking-wider">
+                                                {activePhoto.city} <span className="mx-1 opacity-45"> | </span> {activePhoto.region}
+                                            </p>
+                                        </div>
+
+                                        <div className="h-[1px] bg-natural-border"></div>
+
+                                        {/* INTEGRATED HORIZONTAL GALLERY TRACK (Inside the detailed view) */}
+                                        {currentModalImages.length > 1 && (
+                                            <div className="flex gap-2 py-1 overflow-x-auto scrollbar-thin scrollbar-thumb-natural-border max-w-full">
+                                                {currentModalImages.map((imgName, idx) => (
+                                                    <button
+                                                        key={idx}
+                                                        onClick={() => setActiveImageIndex(idx)}
+                                                        className={`w-14 h-14 rounded-md overflow-hidden border-2 transition-all duration-200 shrink-0 ${
+                                                            activeImageIndex === idx 
+                                                                ? 'border-accent scale-105 shadow-sm' 
+                                                                : 'border-natural-border/60 opacity-60 hover:opacity-100'
+                                                        }`}
+                                                    >
+                                                        <img 
+                                                            src={getFullImageUrl(imgName)} 
+                                                            alt={`Gallery link ${idx + 1}`} 
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        <p className="text-sm leading-relaxed text-natural-text font-serif pt-2">
+                                            {activePhoto.caption}
                                         </p>
                                     </div>
 
-                                    <div className="h-[1px] bg-natural-border"></div>
-
-                                    <p className="text-sm leading-relaxed text-natural-text font-serif">
-                                        {activePhoto.caption}
-                                    </p>
-                                </div>
-
-                                <div className="mt-8 pt-4 border-t border-natural-border/60 space-y-2 font-mono text-[11px] text-text-muted">
-                                    <div className="flex justify-between">
-                                        <span>Visited:</span>
-                                        <span className="text-natural-text">{activePhoto.visited_at}</span>
-                                    </div>
-                                    <div className="flex justify-between items-center">
-                                        <span>Score:</span>
-                                        <span className="text-accent text-[9px] tracking-tighter">{renderStars(activePhoto.rating)}</span>
+                                    <div className="mt-8 pt-4 border-t border-natural-border/60 space-y-2 font-mono text-[11px] text-text-muted">
+                                        <div className="flex justify-between">
+                                            <span>Visited:</span>
+                                            <span className="text-natural-text">{activePhoto.visited_at}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center">
+                                            <span>Score:</span>
+                                            <span className="text-accent text-[9px] tracking-tighter">{renderStars(activePhoto.rating)}</span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </motion.div>
                         </motion.div>
-                    </motion.div>
-                )}
+                    );
+                })()}
             </AnimatePresence>
+
         </div>
     );
 };
