@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
 import yotsugi from '../../images/yotsugi.webp';
+import yotsugiMobile from '../../images/yotsugi-mobile.webp'
 import { useSeason } from '@/context/SeasonContext';
 
 export const Home: React.FC = () => {
@@ -49,36 +50,40 @@ export const Home: React.FC = () => {
       {/* Seasonal Accents */}
       {renderFoliage()}
 
-      <main className="flex-1 flex px-[5%] py-12 relative z-10">
+      <main className="flex-1 flex px-[5%] py-2 relative z-10">
         {/* Side Info */}
         <aside className="hidden md:flex w-12 flex-col justify-center items-center gap-8 border-r border-natural-border pr-8">
-          <span className="rotate-180 [writing-mode:vertical-lr] text-[10px] uppercase tracking-[0.3em] opacity-40 text-natural-text">Current Phase</span>
+          <span className="rotate-180 [writing-mode:vertical-lr] text-[10px] uppercase tracking-[0.3em] opacity-40 text-natural-text">Current Page</span>
           <span className="text-xl font-light text-natural-text">01</span>
           <div className="h-24 w-px bg-natural-border" />
           <span className="text-xl font-light opacity-30 text-natural-text">04</span>
         </aside>
 
         {/* Central Content */}
-        <div className="flex-1 px-4 md:px-12 flex flex-col justify-center">
-            <div 
-              className="relative w-full aspect-[21/9] mb-12 flex items-center justify-center overflow-hidden vignette-mask"
-              onMouseMove={handleMouseMove}
-              onMouseLeave={handleMouseLeave}
+        <div className="flex-1 flex-col justify-center">
+          <div 
+            className="relative w-full aspect-[4/5] md:aspect-[7/3] mb-8 flex items-start justify-center overflow-hidden vignette-mask"
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+          >
+
+            <motion.div 
+              initial={{ scale: 1.15, opacity: 0 }}
+              animate={{ scale: 1.05, opacity: 1 }} 
+              transition={{ duration: 2.5, ease: "easeOut" }}
+              style={{ x: xOffset, y: yOffset }}
+              className="w-full h-full flex items-start justify-center overflow-hidden"
             >
-               <motion.div 
-                 initial={{ scale: 1.15, opacity: 0 }}
-                 animate={{ scale: 1.05, opacity: 1 }} 
-                 transition={{ duration: 2.5, ease: "easeOut" }}
-                 style={{ x: xOffset, y: yOffset }}
-                 className="w-full h-full flex items-center justify-center"
-               >
-                 <img 
-                    src={yotsugi}
-                    alt="Ononoki Yotsugi" 
-                    className="w-[110%] h-[110%] max-w-none object-cover opacity-90 hover:opacity-100 transition-opacity duration-700"
-                  />
-               </motion.div>
-            </div>
+              <picture className="w-[110%] h-[110%] max-w-none">
+                <source media="(max-width: 1024px)" srcSet={yotsugiMobile} />
+                <img 
+                  src={yotsugi}
+                  alt="Ononoki Yotsugi" 
+                  className="h-full object-cover opacity-90 hover:opacity-100 transition-opacity duration-700"
+                />
+              </picture>
+            </motion.div>
+          </div>
 
             <section className="max-w-3xl space-y-8">
                <h1 className="text-4xl md:text-6xl font-light leading-tight tracking-tighter text-natural-text">
@@ -86,7 +91,7 @@ export const Home: React.FC = () => {
                </h1>
                <div className="text-lg md:text-xl leading-relaxed text-text-muted serif-italic space-y-6">
                  <p>
-                   "Hi, my name is <span className="text-natural-text not-italic font-semibold border-b border-accent transition-colors">Henry</span>. I am a year 2 Computer Science and Math student at the National University of Singapore."
+                   "Hi, my name is <span className="text-natural-text not-italic font-semibold border-b border-accent transition-colors">Henry</span>, a year 2 Computer Science and Math student."
                  </p>
                  <p className="opacity-80">
                    "This is less of a portfolio, but more of a dialogue between the observer and the observed. 

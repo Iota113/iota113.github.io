@@ -249,7 +249,7 @@ export const Travel: React.FC = () => {
                                     />
                                     {photo.is_cover && (
                                         <div className="absolute top-2 left-2 px-2 py-0.5 bg-accent text-white font-mono text-[9px] rounded-sm tracking-widest uppercase">
-                                            Signature
+                                            Iota's Choice
                                         </div>
                                     )}
                                     <div className="absolute bottom-2 right-2 px-2 py-0.5 font-mono text-[10px] rounded-sm border border-accent/25 bg-surface-bg/80 text-accent backdrop-blur-sm tracking-tight font-semibold">
@@ -291,10 +291,10 @@ export const Travel: React.FC = () => {
                                 animate={{ scale: 1, y: 0 }}
                                 exit={{ scale: 0.95, y: 15 }}
                                 onClick={(e) => e.stopPropagation()}
-                                className={`${getCardBgStyle()} w-full max-w-4xl rounded-[var(--radius-ui)] overflow-hidden border border-natural-border shadow-ui flex flex-col md:flex-row h-auto max-h-[90vh] md:h-[550px]`}
+                                className={`${getCardBgStyle()} w-full max-w-6xl rounded-[var(--radius-ui)] overflow-hidden border border-natural-border shadow-ui flex flex-col md:flex-row h-auto max-h-[90vh] md:h-[550px]`}
                             >
-                                {/* MEDIA VIEWPORT (Now completely clean and dedicated to the active image) */}
-                                <div className="w-full md:w-3/5 h-[300px] md:h-full bg-black relative flex items-center justify-center">
+                                {/* MEDIA VIEWPORT */}
+                                <div className="w-full md:w-2/3 h-[300px] md:h-full bg-black relative flex items-center justify-center">
                                     <motion.img 
                                         key={activeImageIndex}
                                         initial={{ opacity: 0 }}
@@ -307,13 +307,13 @@ export const Travel: React.FC = () => {
                                 </div>
                                 
                                 {/* DETAIL TEXT DATA + SIDEBAR GALLERY */}
-                                <div className="w-full md:w-2/5 p-6 md:p-8 flex flex-col justify-between border-t md:border-t-0 md:border-l border-natural-border overflow-y-auto bg-surface-bg"
+                                <div className="w-full md:w-3/5 p-6 md:p-8 flex flex-col justify-between border-t md:border-t-0 md:border-l border-natural-border overflow-y-auto bg-surface-bg"
                                     style={{backgroundColor: 'color-mix(in srgb, var(--surface-bg) 95%, black)'}}
                                 >
                                     <div className="space-y-4">
                                         <div className="flex justify-between items-center">
                                             <span className="font-mono text-xs text-accent uppercase tracking-widest">
-                                                Log Entry {currentModalImages.length > 1 && `(${activeImageIndex + 1}/${currentModalImages.length})`}
+                                                Location Entry {currentModalImages.length > 1 && `(${activeImageIndex + 1}/${currentModalImages.length})`}
                                             </span>
                                             <button 
                                                 onClick={() => setActivePhoto(null)} 
