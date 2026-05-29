@@ -291,10 +291,11 @@ export const Travel: React.FC = () => {
                                 animate={{ scale: 1, y: 0 }}
                                 exit={{ scale: 0.95, y: 15 }}
                                 onClick={(e) => e.stopPropagation()}
-                                className={`${getCardBgStyle()} w-full max-w-6xl rounded-[var(--radius-ui)] overflow-hidden border border-natural-border shadow-ui flex flex-col md:flex-row h-auto max-h-[90vh] md:h-[550px]`}
+                                /* Dynamic height structure with max-width optimization */
+                                className={`${getCardBgStyle()} w-full max-w-5xl rounded-[var(--radius-ui)] overflow-hidden border border-natural-border shadow-ui flex flex-col md:flex-row h-auto max-h-[90vh] md:max-h-[85vh]`}
                             >
-                                {/* MEDIA VIEWPORT */}
-                                <div className="w-full md:w-2/3 h-[300px] md:h-full bg-black relative flex items-center justify-center">
+                                {/* MEDIA VIEWPORT - Forced 4:3 Aspect Ratio Box on Desktop */}
+                                <div className="w-full md:w-[55%] h-[300px] md:h-auto md:aspect-[4/3] bg-black relative flex items-center justify-center overflow-hidden">
                                     <motion.img 
                                         key={activeImageIndex}
                                         initial={{ opacity: 0 }}
@@ -302,12 +303,12 @@ export const Travel: React.FC = () => {
                                         transition={{ duration: 0.2 }}
                                         src={getFullImageUrl(currentModalImages[activeImageIndex] || activePhoto.image_filename)} 
                                         alt={activePhoto.place} 
-                                        className="w-full h-full object-contain md:object-cover"
+                                        className="w-full h-full object-contain"
                                     />
                                 </div>
                                 
                                 {/* DETAIL TEXT DATA + SIDEBAR GALLERY */}
-                                <div className="w-full md:w-3/5 p-6 md:p-8 flex flex-col justify-between border-t md:border-t-0 md:border-l border-natural-border overflow-y-auto bg-surface-bg"
+                                <div className="w-full md:w-[45%] p-6 md:p-8 flex flex-col justify-between border-t md:border-t-0 md:border-l border-natural-border overflow-y-auto bg-surface-bg"
                                     style={{backgroundColor: 'color-mix(in srgb, var(--surface-bg) 95%, black)'}}
                                 >
                                     <div className="space-y-4">
@@ -324,7 +325,7 @@ export const Travel: React.FC = () => {
                                         </div>
 
                                         <div>
-                                            <h2 className="text-3xl font-display font-bold tracking-tight text-natural-text">{activePhoto.place}</h2>
+                                            <h2 className="text-2xl font-display font-bold tracking-tight text-natural-text">{activePhoto.place}</h2>
                                             <p className="text-sm font-mono text-text-muted mt-0.5 uppercase tracking-wider">
                                                 {activePhoto.city} <span className="mx-1 opacity-45"> | </span> {activePhoto.region}
                                             </p>
@@ -332,7 +333,7 @@ export const Travel: React.FC = () => {
 
                                         <div className="h-[1px] bg-natural-border"></div>
 
-                                        {/* INTEGRATED HORIZONTAL GALLERY TRACK (Inside the detailed view) */}
+                                        {/* INTEGRATED HORIZONTAL GALLERY TRACK */}
                                         {currentModalImages.length > 1 && (
                                             <div className="flex gap-2 py-1 overflow-x-auto scrollbar-thin scrollbar-thumb-natural-border max-w-full">
                                                 {currentModalImages.map((imgName, idx) => (
