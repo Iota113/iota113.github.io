@@ -9,7 +9,3 @@ v2 is a personal website built with React and Tailwind using Google AI Studio. I
 Its eventual purpose is to replace my current site (Iota113.github.io), which has gone through several iterations—from a janky but sincere first draft to a prettier but less unique redesign by adapting a template by Forty.
 
 In the age of AI where development is highly accelerated, I thought I'd try pushing the limits of what I can build with the assistance of LLMs like Claude and Gemini. 
-
-## Known Issues
-- The homepage currently renders as a blank page on initial load.
- - Temporary workaround: navigate directly to a subpage using the header
