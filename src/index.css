@@ -138,18 +138,16 @@
 /* Ethereal Fading Edge Mask */
 .vignette-mask {
   -webkit-mask-image: radial-gradient(
-    ellipse 60% 85% at 50% 50%,
-    rgba(0, 0, 0, 1) 30%,
-    rgba(0, 0, 0, 0.3) 65%,
-    rgba(0, 0, 0, 0) 80%,
-    transparent 70%
+    ellipse 85% 90% at 50% 50%,
+    rgba(0, 0, 0, 1) 60%,
+    rgba(0, 0, 0, 0.4) 85%,
+    transparent 100%
   );
   mask-image: radial-gradient(
-    ellipse 60% 85% at 50% 50%,
-    rgba(0, 0, 0, 1) 30%,
-    rgba(0, 0, 0, 0.3) 65%,
-    rgba(0, 0, 0, 0) 80%,
-    transparent 70%
+    ellipse 85% 90% at 50% 50%,
+    rgba(0, 0, 0, 1) 60%,
+    rgba(0, 0, 0, 0.4) 85%,
+    transparent 100%
   );
 }
 

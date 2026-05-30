@@ -5,8 +5,9 @@ import { useSeason } from '../context/SeasonContext';
 
 interface TravelPhoto {
     id: string;
-    image_filename: string;
-    additional_images?: string[]; // Added to support multiple images per place
+    thumbnail_image: string;
+    additional_images: string[];
+    additional_high_res_images: string[];
     place: string;
     city: string;
     region: string;
@@ -22,7 +23,7 @@ export const Travel: React.FC = () => {
     const [selectedRegion, setSelectedRegion] = useState<string>('ALL');
     const [selectedCity, setSelectedCity] = useState<string>('ALL');
     const [activePhoto, setActivePhoto] = useState<TravelPhoto | null>(null);
-    const [activeImageIndex, setActiveImageIndex] = useState<number>(0); // Added for modal sidebar tracking
+    const [activeImageIndex, setActiveImageIndex] = useState<number>(0); 
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -45,7 +46,6 @@ export const Travel: React.FC = () => {
         fetchTravelData();
     }, []);
 
-    // Whenever the region changes, reset the chosen city to avoid orphaned selections
     useEffect(() => {
         setSelectedCity('ALL');
     }, [selectedRegion]);
@@ -68,7 +68,7 @@ export const Travel: React.FC = () => {
     const stats = useMemo(() => {
         const uniquePlaces = new Set(photos.map(p => p.place)).size;
         const uniqueCities = new Set(photos.map(p => p.city)).size;
-        const expLevel = Math.min(99, Math.max(1, uniquePlaces * 2 + uniqueCities * 5));
+        const expLevel = Math.max(1, uniquePlaces * 2 + uniqueCities * 5);
         
         return {
             level: expLevel,
@@ -77,7 +77,6 @@ export const Travel: React.FC = () => {
         };
     }, [photos]);
 
-    // Two-tier cascaded filtering logic
     const filteredPhotos = useMemo(() => {
         return photos.filter(p => {
             const matchesRegion = selectedRegion === 'ALL' || p.region === selectedRegion;
@@ -91,11 +90,10 @@ export const Travel: React.FC = () => {
         return '★'.repeat(validRating) + '☆'.repeat(5 - validRating);
     };
 
-    const getFullImageUrl = (filename: string) => {
+    const getImageUrl = (filename: string) => {
         return `${TRAVEL_URL}/${filename}`;
     };
 
-    // 2. Decorative Ambient Engine
     const particles = useMemo(() => {
         return Array.from({ length: 40 }).map((_, i) => ({
             id: i,
@@ -130,11 +128,6 @@ export const Travel: React.FC = () => {
             default: return 'bg-zinc-900';
         }
     };
-
-    // Compute active photo image collection outside of JSX to prevent syntax blocks
-    const currentModalImages = activePhoto 
-        ? [activePhoto.image_filename, ...(activePhoto.additional_images || [])]
-        : [];
 
     return (
         <div className="min-h-screen w-full bg-natural-bg text-natural-text flex flex-col items-center pt-24 pb-16 px-4 md:px-8 font-sans overflow-hidden relative transition-colors duration-700">
@@ -181,7 +174,7 @@ export const Travel: React.FC = () => {
 
                     {/* Dual Tier Filtering UI */}
                     <div className="flex flex-col gap-4">
-                        {/* 1st Tier: Regions */}
+                        {/* Region Filters */}
                         <div className="flex flex-col gap-1.5">
                             <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted">Region:</span>
                             <div className="flex flex-wrap gap-2">
@@ -201,7 +194,7 @@ export const Travel: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* 2nd Tier: Cities */}
+                        {/* City Filters */}
                         <div className="flex flex-col gap-1.5">
                             <span className="text-[10px] font-mono uppercase tracking-widest text-text-muted">City:</span>
                             <div className="flex flex-wrap gap-2">
@@ -223,7 +216,7 @@ export const Travel: React.FC = () => {
                     </div>
                 </div>
 
-                {/* --- COMPENDIUM MATRIX / PHOTO GRID --- */}
+                {/* --- PHOTO GRID --- */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-6">
                     <AnimatePresence mode="popLayout">
                         {filteredPhotos.map((photo) => (
@@ -236,13 +229,13 @@ export const Travel: React.FC = () => {
                                 transition={{ duration: 0.3 }}
                                 onClick={() => {
                                     setActivePhoto(photo);
-                                    setActiveImageIndex(0); // Reset sidebar view to first image
+                                    setActiveImageIndex(0); 
                                 }}
                                 className="group relative bg-surface-bg border border-natural-border hover:border-accent/50 rounded-[var(--radius-ui)] overflow-hidden cursor-pointer shadow-sm hover:shadow-ui transition-all duration-300 flex flex-col"
                             >
                                 <div className="aspect-[4/5] w-full bg-natural-bg relative overflow-hidden border-b border-natural-border/60">
                                     <img 
-                                        src={getFullImageUrl(photo.image_filename)} 
+                                        src={getImageUrl(photo.thumbnail_image)} 
                                         alt={photo.place}
                                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                         loading="lazy"
@@ -273,10 +266,14 @@ export const Travel: React.FC = () => {
             {/* --- INSPECT MODAL --- */}
             <AnimatePresence>
                 {activePhoto && (() => {
-                    const currentModalImages = [
-                        activePhoto.image_filename,
-                        ...(activePhoto.additional_images || [])
-                    ];
+                    // Look strictly at the arrays for the modal view
+                    const lowResGallery = activePhoto.additional_images || [];
+                    const highResGallery = activePhoto.additional_high_res_images || [];
+                    
+                    // Resolve the high-res view image, falling back cleanly to low-res if needed
+                    const highResViewportUrl = highResGallery[activeImageIndex]
+                        ? getImageUrl(highResGallery[activeImageIndex])
+                        : getImageUrl(lowResGallery[activeImageIndex]);
 
                     return (
                         <motion.div 
@@ -291,30 +288,33 @@ export const Travel: React.FC = () => {
                                 animate={{ scale: 1, y: 0 }}
                                 exit={{ scale: 0.95, y: 15 }}
                                 onClick={(e) => e.stopPropagation()}
-                                /* Dynamic height structure with max-width optimization */
                                 className={`${getCardBgStyle()} w-full max-w-5xl rounded-[var(--radius-ui)] overflow-hidden border border-natural-border shadow-ui flex flex-col md:flex-row h-auto max-h-[90vh] md:max-h-[85vh]`}
                             >
-                                {/* MEDIA VIEWPORT - Forced 4:3 Aspect Ratio Box on Desktop */}
+                                {/* MEDIA VIEWPORT */}
                                 <div className="w-full md:w-[55%] h-[300px] md:h-auto md:aspect-[4/3] bg-black relative flex items-center justify-center overflow-hidden">
-                                    <motion.img 
-                                        key={activeImageIndex}
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        transition={{ duration: 0.2 }}
-                                        src={getFullImageUrl(currentModalImages[activeImageIndex] || activePhoto.image_filename)} 
-                                        alt={activePhoto.place} 
-                                        className="w-full h-full object-contain"
-                                    />
+                                    {lowResGallery.length > 0 ? (
+                                        <motion.img 
+                                            key={activeImageIndex}
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            transition={{ duration: 0.2 }}
+                                            src={highResViewportUrl} 
+                                            alt={activePhoto.place} 
+                                            className="w-full h-full object-contain"
+                                        />
+                                    ) : (
+                                        <div className="text-text-muted font-mono text-xs">No preview images available</div>
+                                    )}
                                 </div>
                                 
-                                {/* DETAIL TEXT DATA + SIDEBAR GALLERY */}
+                                {/* DETAILS + SIDEBAR GALLERY */}
                                 <div className="w-full md:w-[45%] p-6 md:p-8 flex flex-col justify-between border-t md:border-t-0 md:border-l border-natural-border overflow-y-auto bg-surface-bg"
                                     style={{backgroundColor: 'color-mix(in srgb, var(--surface-bg) 95%, black)'}}
                                 >
                                     <div className="space-y-4">
                                         <div className="flex justify-between items-center">
                                             <span className="font-mono text-xs text-accent uppercase tracking-widest">
-                                                Location Entry {currentModalImages.length > 1 && `(${activeImageIndex + 1}/${currentModalImages.length})`}
+                                                Location Entry {lowResGallery.length > 0 && `(${activeImageIndex + 1}/${lowResGallery.length})`}
                                             </span>
                                             <button 
                                                 onClick={() => setActivePhoto(null)} 
@@ -333,10 +333,10 @@ export const Travel: React.FC = () => {
 
                                         <div className="h-[1px] bg-natural-border"></div>
 
-                                        {/* INTEGRATED HORIZONTAL GALLERY TRACK */}
-                                        {currentModalImages.length > 1 && (
+                                        {/* HORIZONTAL GALLERY TRACK - Fixed to strictly map existing array elements */}
+                                        {lowResGallery.length > 1 && (
                                             <div className="flex gap-2 py-1 overflow-x-auto scrollbar-thin scrollbar-thumb-natural-border max-w-full">
-                                                {currentModalImages.map((imgName, idx) => (
+                                                {lowResGallery.map((imgName, idx) => (
                                                     <button
                                                         key={idx}
                                                         onClick={() => setActiveImageIndex(idx)}
@@ -347,9 +347,10 @@ export const Travel: React.FC = () => {
                                                         }`}
                                                     >
                                                         <img 
-                                                            src={getFullImageUrl(imgName)} 
-                                                            alt={`Gallery link ${idx + 1}`} 
+                                                            src={getImageUrl(imgName)} 
+                                                            alt={`Gallery control indicator ${idx + 1}`} 
                                                             className="w-full h-full object-cover"
+                                                            loading="lazy"
                                                         />
                                                     </button>
                                                 ))}
@@ -364,7 +365,7 @@ export const Travel: React.FC = () => {
                                     <div className="mt-8 pt-4 border-t border-natural-border/60 space-y-2 font-mono text-[11px] text-text-muted">
                                         <div className="flex justify-between">
                                             <span>Visited:</span>
-                                            <span className="text-natural-text">{activePhoto.visited_at}</span>
+                                            <span>{activePhoto.visited_at}</span>
                                         </div>
                                         <div className="flex justify-between items-center">
                                             <span>Score:</span>
@@ -377,6 +378,7 @@ export const Travel: React.FC = () => {
                     );
                 })()}
             </AnimatePresence>
+            
 
         </div>
     );

@@ -1,11 +1,43 @@
-import React from 'react';
-import { motion, useMotionValue, useSpring, useTransform } from 'motion/react';
+import React, { useState, useEffect } from 'react';
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'motion/react';
+import { Link } from 'react-router-dom';
 import yotsugi from '../../images/yotsugi.webp';
-import yotsugiMobile from '../../images/yotsugi-mobile.webp'
+import yotsugiMobile from '../../images/yotsugi-mobile.webp';
 import { useSeason } from '@/context/SeasonContext';
+import { supabase } from '../services/supabase';
+
+interface Skill {
+  id: string;
+  name: string;
+  icon_url: string; 
+}
 
 export const Home: React.FC = () => {
   const { season } = useSeason(); 
+  const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
+  
+  const [skills, setSkills] = useState<Skill[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('skills')
+          .select('*')
+          .order('display_order', { ascending: true });
+
+        if (error) throw error;
+        if (data) setSkills(data);
+      } catch (err) {
+        console.error('Error loading skills layout context:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchSkills();
+  }, []);
 
   const mouseX = useMotionValue(0.5);
   const mouseY = useMotionValue(0.5);
@@ -42,12 +74,12 @@ export const Home: React.FC = () => {
       </div>
     );
   };
+
   return (
     <div className="mx-auto w-full min-h-screen flex flex-col relative overflow-hidden bg-natural-bg transition-colors duration-700">
       <div className="bg-blob top-10 right-10 w-96 h-96 bg-accent opacity-10" />
       <div className="bg-blob bottom-20 left-10 w-80 h-80 bg-secondary opacity-10" />
       
-      {/* Seasonal Accents */}
       {renderFoliage()}
 
       <main className="flex-1 flex px-[5%] py-2 relative z-10">
@@ -62,43 +94,130 @@ export const Home: React.FC = () => {
         {/* Central Content */}
         <div className="flex-1 flex-col justify-center">
           <div 
-            className="relative w-full aspect-[4/5] md:aspect-[7/3] mb-8 flex items-start justify-center overflow-hidden vignette-mask"
+            className="relative w-full aspect-[4/5] md:aspect-[14/4] mb-8 items-center justify-center overflow-hidden"
+            style={{
+              WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent), linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)',
+              maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent), linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)',
+              WebkitMaskComposite: 'source-in',
+              maskComposite: 'intersect'
+            }}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
           >
-
             <motion.div 
               initial={{ scale: 1.15, opacity: 0 }}
               animate={{ scale: 1.05, opacity: 1 }} 
               transition={{ duration: 2.5, ease: "easeOut" }}
               style={{ x: xOffset, y: yOffset }}
-              className="w-full h-full flex items-start justify-center overflow-hidden"
+              className="w-full h-full flex items-center justify-center overflow-hidden"
             >
-              <picture className="w-[110%] h-[110%] max-w-none">
+              <picture className="w-[110%] h-[110%] max-w-none flex items-center justify-center vignette-mask">
                 <source media="(max-width: 1024px)" srcSet={yotsugiMobile} />
                 <img 
                   src={yotsugi}
                   alt="Ononoki Yotsugi" 
-                  className="h-full object-cover opacity-90 hover:opacity-100 transition-opacity duration-700"
+                  className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity duration-700"
                 />
               </picture>
             </motion.div>
           </div>
 
-            <section className="max-w-3xl space-y-8">
-               <h1 className="text-4xl md:text-6xl font-light leading-tight tracking-tighter text-natural-text">
-                  <Typewriter text="僕はキメ顔でそう言った。" delay={150} />
-               </h1>
-               <div className="text-lg md:text-xl leading-relaxed text-text-muted serif-italic space-y-6">
-                 <p>
-                   "Hi, my name is <span className="text-natural-text not-italic font-semibold border-b border-accent transition-colors">Henry</span>, a year 2 Computer Science and Math student."
-                 </p>
-                 <p className="opacity-80">
-                   "This is less of a portfolio, but more of a dialogue between the observer and the observed. 
-                   Explore the <Link to="/archive" className="text-natural-text not-italic border-b border-accent/30 hover:border-accent group transition-all">Archive</Link> to see the chronicles I've gathered."
-                 </p>
-               </div>
-            </section>
+          <section className="ml-6 max-w-3xl space-y-12">
+            <h1 className="text-4xl md:text-6xl font-light leading-tight tracking-tighter text-natural-text">
+              <Typewriter text="僕はキメ顔でそう言った。" delay={150} />
+            </h1>
+            <div className="text-lg md:text-l leading-relaxed text-text-muted space-y-4">
+              <p>
+                Hi, my name is <span className="text-natural-text not-italic font-semibold border-b border-accent transition-colors">Henry</span>, a year 2 Computer Science and Math student. 
+                My academic interest lies in pure math and math-adjacent CS fields like algorithms and AI.
+              </p>
+
+              <p className='opacity-70 italic'>
+                Though my investment in pure math is facing some kind of a decline as the dread of the pointlessness
+                of me studying things like composition series and solvable groups is creeping up on me after taking my introductory abstract algebra course.
+              </p>
+
+              <p>
+                This is both a portfolio and a journal. I record my notable projects and some fun stuff like the media I have consumed and places I have travelled to. I 
+                hope you have fun exploring my attempt at being creative.
+              </p>
+            </div>
+
+            {/* --- Workspace Toolkit --- */}
+            <div className="pt-6">
+              <h3 className="text-s font-mono tracking-[0.2em] text-accent uppercase mb-6 flex items-center gap-2">
+                <span className="h-[2px] w-12 bg-accent" /> skills
+              </h3>
+
+              {isLoading ? (
+                <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-4 animate-pulse">
+                  {[...Array(8)].map((_, i) => (
+                    <div key={i} className="aspect-square rounded-xl" />
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-2 w-full items-center justify-start">
+                  {skills.map((skill) => {
+                    const isExpanded = hoveredSkill === skill.id;
+                    return (
+                      <motion.div
+                        key={skill.id}
+                        onMouseEnter={() => setHoveredSkill(skill.id)}
+                        onMouseLeave={() => setHoveredSkill(null)}
+                        animate={{
+                          scale: isExpanded ? 1.1 : 1,
+                        }}
+                        transition={{ type: "spring", stiffness: 150, damping: 15 }}
+                        className={`relative flex flex-col items-center justify-center p-4 w-24 h-24 rounded-xl border border-natural-border bg-natural-bg cursor-default transition-shadow duration-300
+                          ${isExpanded ? 'shadow-md md:border-accent/40 z-20' : 'z-10'}
+                        `}
+                      >
+                        <AnimatePresence>
+                          {isExpanded && (
+                            <motion.div 
+                              layoutId="activeGlow"
+                              className="absolute inset-0 bg-gradient-to-b from-accent/5 to-secondary/5 -z-10 rounded-xl"
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              transition={{ duration: 0.2 }}
+                            />
+                          )}
+                        </AnimatePresence>
+
+                        {/* Skill Icon Container */}
+                        <div className={`w-12 h-12 flex-shrink-0 flex items-center justify-center p-1.5 rounded-xl transition-all duration-300`}>
+                          <img 
+                            src={skill.icon_url} 
+                            alt={`${skill.name} icon`}
+                            className="w-full h-full object-contain dark:invert-[0.1] opacity-80"
+                          />
+                        </div>
+
+                        {/* Skill Name underneath Icon on Hover */}
+                        <div className="h-4 mt-1.5 flex items-center justify-center w-full text-center overflow-visible">
+                          <AnimatePresence>
+                            {isExpanded && (
+                              <motion.span 
+                                initial={{ opacity: 0, y: 4 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 2 }}
+                                transition={{ duration: 0.15, ease: "easeOut" }}
+                                className="font-mono text-[10px] font-semibold text-natural-text block truncate"
+                              >
+                                {skill.name}
+                              </motion.span>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+            
+          </section>
         </div>
       </main>
 
@@ -126,20 +245,3 @@ const Typewriter = ({ text, delay }: { text: string; delay: number }) => {
 
   return <span>{displayedText}</span>;
 };
-
-const SkillCategory = ({ title, skills }: { title: string; skills: string[] }) => (
-  <div>
-    <h3 className="text-xl font-bold font-mono tracking-[0.2em] text-accent uppercase mb-6 flex items-center gap-2">
-      <span className="h-[1px] w-8 bg-accent" /> {title}
-    </h3>
-    <div className="flex flex-wrap gap-6">
-      {skills.map((skill) => (
-        <span key={skill} className="font-mono text-sm font-semibold text-mono-black/60 hover:text-accent transition-colors cursor-default">
-          {skill}
-        </span>
-      ))}
-    </div>
-  </div>
-);
-
-import { Link } from 'react-router-dom';
