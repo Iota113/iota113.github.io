@@ -288,10 +288,10 @@ export const Travel: React.FC = () => {
                                 animate={{ scale: 1, y: 0 }}
                                 exit={{ scale: 0.95, y: 15 }}
                                 onClick={(e) => e.stopPropagation()}
-                                className={`${getCardBgStyle()} w-full max-w-5xl rounded-[var(--radius-ui)] overflow-hidden border border-natural-border shadow-ui flex flex-col md:flex-row h-auto max-h-[90vh] md:max-h-[85vh]`}
+                                className={`${getCardBgStyle()} w-full max-w-6xl rounded-[var(--radius-ui)] overflow-hidden border border-natural-border shadow-ui flex flex-col md:flex-row h-auto max-h-[90vh] md:max-h-[85vh]`}
                             >
                                 {/* MEDIA VIEWPORT */}
-                                <div className="w-full md:w-[55%] h-[300px] md:h-auto md:aspect-[4/3] bg-black relative flex items-center justify-center overflow-hidden">
+                                <div className="w-full md:w-[72%] h-[400px] md:h-auto md:aspect-[4/3] bg-black relative flex items-center justify-center overflow-hidden">
                                     {lowResGallery.length > 0 ? (
                                         <motion.img 
                                             key={activeImageIndex}
@@ -308,7 +308,7 @@ export const Travel: React.FC = () => {
                                 </div>
                                 
                                 {/* DETAILS + SIDEBAR GALLERY */}
-                                <div className="w-full md:w-[45%] p-6 md:p-8 flex flex-col justify-between border-t md:border-t-0 md:border-l border-natural-border overflow-y-auto bg-surface-bg"
+                                <div className="w-full md:w-[28%] p-6 md:p-8 flex flex-col justify-between border-t md:border-t-0 md:border-l border-natural-border overflow-y-auto bg-surface-bg"
                                     style={{backgroundColor: 'color-mix(in srgb, var(--surface-bg) 95%, black)'}}
                                 >
                                     <div className="space-y-4">
