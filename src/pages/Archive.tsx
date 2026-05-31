@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import { supabase, ArchiveMedia, ARCHIVE_URL } from '../services/supabase';
+import botwMasterTrials from '../../images/botw-master-trials.webp';
 
 export const Archive: React.FC = () => {
   const [items, setItems] = useState<ArchiveMedia[]>([]);
@@ -63,8 +64,7 @@ export const Archive: React.FC = () => {
           style={{ y: backgroundY, opacity: backgroundOpacity }}
         >
           <img 
-            src="images/botw-master-trials.webp"
-            alt="Archive Background" 
+            src={botwMasterTrials} alt="BOTW Master Trials"
             className="w-full h-[120%] object-cover object-center filter grayscale brightness- contrast-125"
           />
           {/* Edge-fading gradients to seamlessly merge with your natural-bg */}

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import { supabase, TRAVEL_URL } from '../services/supabase';
 import { useSeason } from '../context/SeasonContext';
+import skirkVideoUrl from '../../videos/skirk-star-odyssey.mp4';
 
 interface TravelPhoto {
     id: string;
@@ -144,7 +145,7 @@ export const Travel: React.FC = () => {
                 >
                     <div className="relative w-full h-full overflow-hidden">
                         <video
-                            src="videos/skirk-star-odyssey.mp4" 
+                            src={skirkVideoUrl} 
                             autoPlay
                             loop
                             muted

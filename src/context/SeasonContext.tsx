@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
+import snapSoundUrl from '../../sounds/snap-sound-effect.mp3';
 
 type Season = 'spring' | 'summer' | 'autumn' | 'winter';
 
@@ -83,7 +84,7 @@ export const useSeason = () => {
   return context;
 };
 
-const snapAudio = new Audio('sounds/snap-sound-effect.mp3');
+const snapAudio = new Audio(snapSoundUrl);
 snapAudio.preload = 'auto';
 
 function playSnapSound() {
