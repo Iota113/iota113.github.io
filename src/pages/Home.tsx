@@ -91,7 +91,6 @@ export const Home: React.FC = () => {
           <span className="text-xl font-light opacity-30 text-natural-text">04</span>
         </aside>
 
-        {/* Central Content */}
         <div className="flex-1 flex-col justify-center">
           <div 
             className="relative w-full aspect-[4/5] md:aspect-[14/4] mb-8 items-center justify-center overflow-hidden"
@@ -122,103 +121,110 @@ export const Home: React.FC = () => {
             </motion.div>
           </div>
 
-          <section className="ml-6 max-w-3xl space-y-12">
-            <h1 className="text-4xl md:text-6xl font-light leading-tight tracking-tighter text-natural-text">
+          <section className="ml-6 max-w-8xl space-y-12">
+
+            <h1 className="text-2xl md:text-6xl font-light leading-tight tracking-tighter text-natural-text">
               <Typewriter text="僕はキメ顔でそう言った。" delay={150} />
             </h1>
-            <div className="text-lg md:text-l leading-relaxed text-text-muted space-y-4">
-              <p>
-                Hi, my name is <span className="text-natural-text not-italic font-semibold border-b border-accent transition-colors">Henry</span>, a year 2 Computer Science and Math student. 
-                My academic interest lies in pure math and math-adjacent CS fields like algorithms and AI.
-              </p>
 
-              <p className='opacity-70 italic'>
-                Though my investment in pure math is facing some kind of a decline as the dread of the pointlessness
-                of me studying things like composition series and solvable groups is creeping up on me after taking my introductory abstract algebra course.
-              </p>
+            <div className="flex flex-col md:flex-row gap-12 md:items-start">
 
-              <p>
-                This is both a portfolio and a journal. I record my notable projects and some fun stuff like the media I have consumed and places I have travelled to. I 
-                hope you have fun exploring my attempt at being creative.
-              </p>
-            </div>
+              <div className="text-s md:text-l leading-relaxed text-text-muted space-y-4 md:w-1/2">
+                <p>
+                  Hi, I am <span className="text-natural-text not-italic font-semibold border-b border-accent transition-colors">Henry</span>, a year 2 Computer Science and Math student. 
+                  My academic interest lies in pure math and math-adjacent CS fields like algorithms and AI.
+                </p>
 
-            {/* --- Workspace Toolkit --- */}
-            <div className="pt-6">
-              <h3 className="text-s font-mono tracking-[0.2em] text-accent uppercase mb-6 flex items-center gap-2">
-                <span className="h-[2px] w-12 bg-accent" /> skills
-              </h3>
+                <p className='opacity-70 italic'>
+                  Though my investment in pure math is facing some kind of a decline as the existential dread of the meaninglessness
+                  in studying things like composition series and solvable groups is creeping up on me after taking my introductory abstract algebra course.
+                </p>
 
-              {isLoading ? (
-                <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-4 animate-pulse">
-                  {[...Array(8)].map((_, i) => (
-                    <div key={i} className="aspect-square rounded-xl" />
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-wrap gap-2 w-full items-center justify-start">
-                  {skills.map((skill) => {
-                    const isExpanded = hoveredSkill === skill.id;
-                    return (
-                      <motion.div
-                        key={skill.id}
-                        onMouseEnter={() => setHoveredSkill(skill.id)}
-                        onMouseLeave={() => setHoveredSkill(null)}
-                        animate={{
-                          scale: isExpanded ? 1.1 : 1,
-                        }}
-                        transition={{ type: "spring", stiffness: 150, damping: 15 }}
-                        className={`relative flex flex-col items-center justify-center p-4 w-24 h-24 rounded-xl border border-natural-border bg-natural-bg cursor-default transition-shadow duration-300
-                          ${isExpanded ? 'shadow-md md:border-accent/40 z-20' : 'z-10'}
-                        `}
-                      >
-                        <AnimatePresence>
-                          {isExpanded && (
-                            <motion.div 
-                              layoutId="activeGlow"
-                              className="absolute inset-0 bg-gradient-to-b from-accent/5 to-secondary/5 -z-10 rounded-xl"
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{ opacity: 0 }}
-                              transition={{ duration: 0.2 }}
-                            />
-                          )}
-                        </AnimatePresence>
+                <p>
+                  This is both a portfolio and a journal (built with React and Tailwind CSS). I record my notable projects and fun stuff like the media I have consumed and places I have travelled to. I 
+                  hope you have fun exploring my attempt at being creative.
+                </p>
+              </div>
 
-                        {/* Skill Icon Container */}
-                        <div className={`w-12 h-12 flex-shrink-0 flex items-center justify-center p-1.5 rounded-xl transition-all duration-300`}>
-                          <img 
-                            src={skill.icon_url} 
-                            alt={`${skill.name} icon`}
-                            className="w-full h-full object-contain dark:invert-[0.1] opacity-80"
-                          />
-                        </div>
+              <div className="md:w-1/2 w-full flex flex-col">
+                <h3 className="text-s font-mono tracking-[0.2em] text-accent uppercase mb-6 flex items-center gap-2 md:pl-16">
+                  skills  <span className="h-[2px] w-16 bg-accent" />
+                </h3>
 
-                        {/* Skill Name underneath Icon on Hover */}
-                        <div className="h-4 mt-1.5 flex items-center justify-center w-full text-center overflow-visible">
+                {isLoading ? (
+                  <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-4 animate-pulse">
+                    {[...Array(8)].map((_, i) => (
+                      <div key={i} className="aspect-square rounded-xl" />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap gap-2 w-full items-center justify-start md:max-w-[560px] md:ml-16">
+                    {skills.map((skill) => {
+                      const isExpanded = hoveredSkill === skill.id;
+                      return (
+                        <motion.div
+                          key={skill.id}
+                          onMouseEnter={() => setHoveredSkill(skill.id)}
+                          onMouseLeave={() => setHoveredSkill(null)}
+                          animate={{
+                            scale: isExpanded ? 1.1 : 1,
+                          }}
+                          transition={{ type: "spring", stiffness: 150, damping: 15 }}
+                          className={`relative flex flex-col items-center justify-center p-4 w-20 h-20 rounded-xl border border-natural-border bg-natural-bg cursor-default transition-shadow duration-300
+                            ${isExpanded ? 'shadow-md md:border-accent/40 z-20' : 'z-10'}
+                          `}
+                        >
                           <AnimatePresence>
                             {isExpanded && (
-                              <motion.span 
-                                initial={{ opacity: 0, y: 4 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: 2 }}
-                                transition={{ duration: 0.15, ease: "easeOut" }}
-                                className="font-mono text-[10px] font-semibold text-natural-text block truncate"
-                              >
-                                {skill.name}
-                              </motion.span>
+                              <motion.div 
+                                layoutId="activeGlow"
+                                className="absolute inset-0 bg-gradient-to-b from-accent/5 to-secondary/5 -z-10 rounded-xl"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.2 }}
+                              />
                             )}
                           </AnimatePresence>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              )}
+
+                          {/* Skill Icon Container */}
+                          <div className={`w-10 h-10 flex-shrink-0 flex items-center justify-center p-1.5 rounded-xl transition-all duration-300`}>
+                            <img 
+                              src={skill.icon_url} 
+                              alt={`${skill.name} icon`}
+                              className="w-full h-full object-contain dark:invert-[0.1] opacity-80"
+                            />
+                          </div>
+
+                          {/* Skill Name underneath Icon on Hover */}
+                          <div className="h-4 mt-1.5 flex items-center justify-center w-full text-center overflow-visible">
+                            <AnimatePresence>
+                              {isExpanded && (
+                                <motion.span 
+                                  initial={{ opacity: 0, y: 4 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0, y: 2 }}
+                                  transition={{ duration: 0.15, ease: "easeOut" }}
+                                  className="font-mono text-[10px] font-semibold text-natural-text block truncate"
+                                >
+                                  {skill.name}
+                                </motion.span>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
             </div>
-            
+
           </section>
+          
         </div>
+
       </main>
 
       {/* Decorative Grid Line */}

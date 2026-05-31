@@ -33,7 +33,7 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 flex items-center justify-between bg-natural-bg/90 px-[5%] py-8 backdrop-blur-sm border-b border-natural-border transition-colors duration-700">
+    <header className="sticky top-0 z-50 flex items-center justify-between bg-natural-bg/60 px-[5%] py-8 backdrop-blur-md border-b border-natural-border transition-colors duration-700">
       <Link to="/" className="text-xl font-display font-light tracking-widest text-natural-text uppercase">
         Iota's World
       </Link>
