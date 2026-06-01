@@ -346,7 +346,13 @@ export const Travel: React.FC = () => {
 
                                         {/* HORIZONTAL GALLERY TRACK */}
                                         {gallery.length > 1 && (
-                                            <div className="flex gap-2 py-1 overflow-x-auto scrollbar-thin scrollbar-thumb-natural-border max-w-full">
+                                            <div className="flex gap-2 py-4 overflow-x-auto max-w-full
+                                            [&::-webkit-scrollbar]:h-[8px]
+                                            [&::-webkit-scrollbar]:w-[8px]
+                                            [&::-webkit-scrollbar-thumb]:bg-accent/50
+                                            [&::-webkit-scrollbar-thumb]:rounded-full
+                                            hover:[&::-webkit-scrollbar-thumb]:bg-accent/80
+                                            [-webkit-overflow-scrolling:touch]">
                                                 {gallery.map((imgName, idx) => (
                                                     <button
                                                         key={idx}
