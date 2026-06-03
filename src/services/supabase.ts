@@ -8,7 +8,6 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 export const ARCHIVE_URL = `${SUPABASE_URL}/storage/v1/object/public/archive-images/`;
 export const TRAVEL_URL = `${SUPABASE_URL}/storage/v1/object/public/travel-images`;
 
-
 export interface ArchiveMedia {
     id: string;
     title: string;
@@ -31,15 +30,3 @@ export type RegionDetailBlock =
         caption: string; 
         alt_text: string; 
       };
-
-export interface TravelRegion {
-    id: string;
-    sort_order: number;
-    name: string;
-    tagline: string;
-    description: string;
-    cover_image_path: string;
-    thumbnail_path: string;
-    region_details: RegionDetailBlock[];
-    created_at?: string; 
-}
