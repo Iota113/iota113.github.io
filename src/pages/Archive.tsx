@@ -87,7 +87,7 @@ export const Archive: React.FC = () => {
           </div>
 
           {/* Right Angled Screen Element (Anism-style) */}
-          <div className="w-full flex justify-center md:block [perspective:1200px] justify-self-center lg:justify-self-end md:mr-36">
+          <div className="w-full flex justify-center md:block [perspective:1200px] justify-self-center lg:justify-self-end mr-6 md:mr-36">
             <div 
               className="group/screen relative w-[320px] h-[180px] sm:w-[480px] sm:h-[270px] lg:w-[560px] lg:h-[315px] border border-natural-border/30 bg-surface-bg/40 backdrop-blur-sm shadow-2xl transition-transform duration-700 hover:rotate-y-[-15deg] hover:rotate-x-[8deg]"
               style={{ 

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'motion/react';
-import { Link } from 'react-router-dom';
 import yotsugi from '../../images/yotsugi.webp';
 import yotsugiMobile from '../../images/yotsugi-mobile.webp';
 import { useSeason } from '@/context/SeasonContext';
-import { supabase } from '../services/supabase';
+import { supabase, ARCHIVE_HIGHLIGHTS_URL } from '../services/supabase';
+import RollingGallery from '../components/RollingGallery';
 
 interface Skill {
   id: string;
@@ -12,31 +12,61 @@ interface Skill {
   icon_url: string; 
 }
 
+interface Inspiration {
+  id: string;
+  title: string;
+  creator: string;
+  link: string;
+  type: 'Portfolio' | 'Studio' | 'Art' | 'Tech';
+}
+
 export const Home: React.FC = () => {
   const { season } = useSeason(); 
   const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
+  const [hoveredInspiration, setHoveredInspiration] = useState<number | null>(null);
   
   const [skills, setSkills] = useState<Skill[]>([]);
+  const [rollingItems, setRollingItems] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    const fetchSkills = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('skills')
-          .select('*')
-          .order('display_order', { ascending: true });
+  const [inspirations, setInspirations] = useState<Inspiration[]>([]);
 
-        if (error) throw error;
-        if (data) setSkills(data);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [skillsRes, rollingRes, inspirationsRes] = await Promise.all([
+          supabase.from('skills').select('*').order('display_order', { ascending: true }),
+          supabase.from('archive_highlights').select('*'),
+          supabase.from('inspirations').select('*') // Your new table
+        ]);
+
+        if (skillsRes.error) throw skillsRes.error;
+        if (skillsRes.data) setSkills(skillsRes.data);
+
+        if (rollingRes.error) {
+          console.error("Supabase Error fetching archive_highlights:", rollingRes.error);
+        } else if (rollingRes.data) {
+          setRollingItems(rollingRes.data.map(item => ({
+            id: item.id,
+            title: item.title,
+            image_url: `${ARCHIVE_HIGHLIGHTS_URL}${item.image_filename}`
+          })));
+        }
+
+        if (inspirationsRes.error) {
+          console.error("Supabase Error fetching inspirations:", inspirationsRes.error);
+        } else if (inspirationsRes.data) {
+          setInspirations(inspirationsRes.data);
+        }
+
       } catch (err) {
-        console.error('Error loading skills layout context:', err);
+        console.error('Error loading home page context:', err);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchSkills();
+    fetchData();
   }, []);
 
   const mouseX = useMotionValue(0.5);
@@ -121,7 +151,7 @@ export const Home: React.FC = () => {
             </motion.div>
           </div>
 
-          <section className="ml-6 max-w-8xl space-y-12">
+          <section className="ml-6 max-w-8xl space-y-8">
 
             <h1 className="text-2xl md:text-6xl font-light leading-tight tracking-tighter text-natural-text">
               <Typewriter text="僕はキメ顔でそう言った。" delay={150} />
@@ -226,6 +256,67 @@ export const Home: React.FC = () => {
         </div>
 
       </main>
+
+      <div className="relative w-full z-20">
+        <RollingGallery items={rollingItems} speed={25} />
+      </div>
+
+            {/* --- NEW INSPIRATIONS SECTION --- */}       
+            <div className="px-[10%] flex flex-col gap-6 md:pt-4 mb-6 md:mb-12">
+              <h3 className="text-s font-mono tracking-[0.2em] text-accent uppercase flex items-center gap-2">
+                inspirations <span className="h-[2px] w-16 bg-accent" />
+              </h3>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+                {inspirations.map((item, idx) => {
+                  const isHovered = hoveredInspiration === idx;
+                  return (
+                    <motion.a
+                      href={item.link}
+                      key={idx}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onMouseEnter={() => setHoveredInspiration(idx)}
+                      onMouseLeave={() => setHoveredInspiration(null)}
+                      whileHover={{ y: -4 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      className="relative p-5 rounded-xl border border-natural-border bg-natural-bg/50 backdrop-blur-sm group flex flex-col justify-between overflow-hidden"
+                    >
+                      <AnimatePresence>
+                        {isHovered && (
+                          <motion.div 
+                            layoutId="inspirationGlow"
+                            className="absolute inset-0 bg-gradient-to-tr from-accent/5 via-transparent to-secondary/5 -z-10"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                          />
+                        )}
+                      </AnimatePresence>
+                      
+                      <div className="flex justify-between items-start mb-4">
+                        <span className="font-mono text-[10px] tracking-wider px-2 py-0.5 rounded-md bg-natural-border/30 text-text-muted">
+                          {item.type}
+                        </span>
+                        <span className="text-natural-text opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-x-2 group-hover:translate-x-0 text-xs">
+                          →
+                        </span>
+                      </div>
+                      
+                      <div>
+                        <h4 className="text-md font-medium text-natural-text group-hover:text-accent transition-colors duration-300">
+                          {item.title}
+                        </h4>
+                        <p className="text-xs font-mono text-text-muted mt-1">
+                          {item.creator}
+                        </p>
+                      </div>
+                    </motion.a>
+                  );
+                })}
+              </div>
+            </div>
+            {/* --- END NEW INSPIRATIONS SECTION --- */}
 
       {/* Decorative Grid Line */}
       <div className="absolute inset-0 px-[5%] flex justify-between pointer-events-none opacity-5">
