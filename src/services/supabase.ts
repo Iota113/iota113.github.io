@@ -7,6 +7,7 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export const ARCHIVE_URL = `${SUPABASE_URL}/storage/v1/object/public/archive-images/`;
 export const TRAVEL_URL = `${SUPABASE_URL}/storage/v1/object/public/travel-images`;
+export const ARCHIVE_HIGHLIGHTS_URL = `${SUPABASE_URL}/storage/v1/object/public/archive-highlights/`;
 
 export interface ArchiveMedia {
     id: string;
