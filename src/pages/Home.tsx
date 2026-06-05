@@ -15,9 +15,7 @@ interface Skill {
 interface Inspiration {
   id: string;
   title: string;
-  creator: string;
   link: string;
-  type: 'Portfolio' | 'Studio' | 'Art' | 'Tech';
 }
 
 export const Home: React.FC = () => {
@@ -88,31 +86,12 @@ export const Home: React.FC = () => {
     mouseY.set(0.5);
   };
 
-  const renderFoliage = () => {
-    const styles = {
-      spring: "rounded-tl-full rounded-br-full bg-accent opacity-60",
-      summer: "rounded-full bg-secondary opacity-70",
-      autumn: "rounded-sm rotate-45 bg-accent opacity-80", 
-      winter: "rounded-none rotate-0 bg-secondary opacity-40"      
-    };
-
-    return (
-      <div className="absolute top-10 right-10 flex gap-3 z-0">
-        <div className={`w-4 h-4 transition-all duration-700 ${styles[season]} rotate-45`} />
-        <div className={`w-3 h-3 transition-all duration-700 ${styles[season]} -rotate-12 delay-75`} />
-        <div className={`w-5 h-5 transition-all duration-700 ${styles[season]} rotate-12 delay-150`} />
-      </div>
-    );
-  };
-
   return (
     <div className="mx-auto w-full min-h-screen flex flex-col relative overflow-hidden bg-natural-bg transition-colors duration-700">
       <div className="bg-blob top-10 right-10 w-96 h-96 bg-accent opacity-10" />
       <div className="bg-blob bottom-20 left-10 w-80 h-80 bg-secondary opacity-10" />
       
-      {renderFoliage()}
-
-      <main className="flex-1 flex px-[5%] py-2 relative z-10">
+      <main className="flex-1 flex px-[8%] py-1 relative z-10">
         {/* Side Info */}
         <aside className="hidden md:flex w-12 flex-col justify-center items-center gap-8 border-r border-natural-border pr-8">
           <span className="rotate-180 [writing-mode:vertical-lr] text-[10px] uppercase tracking-[0.3em] opacity-40 text-natural-text">Current Page</span>
@@ -252,13 +231,18 @@ export const Home: React.FC = () => {
             </div>
 
           </section>
-          
+        
         </div>
 
       </main>
 
       <div className="relative w-full z-20">
-        <RollingGallery items={rollingItems} speed={25} />
+        <div className="-pb-9">
+          <RollingGallery items={rollingItems} tiltAngle={-3} />
+        </div>
+        <div className="mb-6">
+          <RollingGallery items={rollingItems} tiltAngle={-3} direction="right"/>
+        </div>
       </div>
 
             {/* --- NEW INSPIRATIONS SECTION --- */}       
@@ -294,29 +278,25 @@ export const Home: React.FC = () => {
                         )}
                       </AnimatePresence>
                       
-                      <div className="flex justify-between items-start mb-4">
-                        <span className="font-mono text-[10px] tracking-wider px-2 py-0.5 rounded-md bg-natural-border/30 text-text-muted">
-                          {item.type}
-                        </span>
+                      <div className="flex justify-between items-center w-full">
+                        <div>
+                          <h4 className="text-md font-medium text-natural-text group-hover:text-accent transition-colors duration-300">
+                            {item.title}
+                          </h4>
+                          <p className="text-xs font-mono text-text-muted mt-1">
+                            {item.link}
+                          </p>
+                        </div>
+
                         <span className="text-natural-text opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-x-2 group-hover:translate-x-0 text-xs">
                           →
                         </span>
-                      </div>
-                      
-                      <div>
-                        <h4 className="text-md font-medium text-natural-text group-hover:text-accent transition-colors duration-300">
-                          {item.title}
-                        </h4>
-                        <p className="text-xs font-mono text-text-muted mt-1">
-                          {item.creator}
-                        </p>
                       </div>
                     </motion.a>
                   );
                 })}
               </div>
             </div>
-            {/* --- END NEW INSPIRATIONS SECTION --- */}
 
       {/* Decorative Grid Line */}
       <div className="absolute inset-0 px-[5%] flex justify-between pointer-events-none opacity-5">

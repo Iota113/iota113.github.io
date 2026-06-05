@@ -98,7 +98,7 @@ export const Archive: React.FC = () => {
             >
               {/* Outer screen bezel glow */}
               <div 
-                className="absolute inset-2 overflow-hidden bg-black border border-natural-border/80 flex items-center justify-center shadow-[0_0_30px_rgba(var(--color-accent),0.15)]"
+                className="absolute inset-2 overflow-hidden bg-black border flex items-center justify-center shadow-[0_0_30px_rgba(var(--color-accent),0.15)]"
                 style={{ borderRadius: 'calc(var(--radius-ui) - 4px)' }}
               >
                 <div className="absolute inset-0 w-full h-full overflow-hidden flex items-center justify-center scale-[1.02]">
@@ -111,9 +111,6 @@ export const Archive: React.FC = () => {
                     style={{ border: 0 }}
                   />
                 </div>
-     
-                {/* Screen Vignette */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_40%,rgba(0,0,0,0.4)_100%)] pointer-events-none" />
                 
                 {/* Mute/Unmute Control Toggle Button overlay */}
                 <button
@@ -153,7 +150,7 @@ export const Archive: React.FC = () => {
               
               {/* Subtle Ambient Shadow thrown behind the screen */}
               <div 
-                className="absolute -inset-4 bg-accent/5 blur-2xl -z-10 translate-y-4"
+                className="absolute -inset-4 bg-accent/5 blur-3xl -z-10 translate-y-4"
                 style={{ transform: 'translateZ(-20px)' }}
               />
             </div>
@@ -196,14 +193,13 @@ export const Archive: React.FC = () => {
               Retrieving Records...
             </div>
           ) : (
-            <div className="space-y-32">
+            <div className="space-y-16">
               {sortedYears.map((year) => (
                 <section key={year}>
-                  <div className="flex items-baseline gap-4 mb-12 border-b border-natural-border pb-4">
-                    <h2 className="text-5xl font-light tracking-tighter">{year}</h2>
-                    <span className="text-[10px] uppercase tracking-widest opacity-30 serif-italic">Phase: {year}</span>
+                  <div className="flex items-baseline gap-4 border-b border-natural-border pb-4">
+                    <h2 className="text-4xl font-light tracking-tighter">{year}</h2>
                   </div>
-                  <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-12">
+                  <div className="grid grid-cols-3 md:grid-cols-3 xl:grid-cols-5 gap-x-4 gap-y-8">
                     <AnimatePresence mode="popLayout">
                       {groupedItems[year].map((item) => (
                         <MediaCard key={item.id} item={item} />
@@ -237,7 +233,7 @@ const MediaCard: React.FC<{ item: ArchiveMedia }> = ({ item }) => {
          <div className="relative h-full w-full overflow-hidden" style={{ borderRadius: 'calc(var(--radius-ui) - 4px)' }}>
             <img 
               src={imageUrl} 
-              alt={item.title} 
+              alt={item.title}
               className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-natural-text/80 opacity-0 transition-opacity duration-500 group-hover:opacity-100 flex items-center justify-center p-6 text-center backdrop-blur-sm">

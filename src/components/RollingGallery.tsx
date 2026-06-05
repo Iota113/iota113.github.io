@@ -10,24 +10,28 @@ interface RollingItem {
 interface RollingGalleryProps {
   items: RollingItem[];
   speed?: number;
+  tiltAngle?: number;
+  direction?: 'left' | 'right';
 }
 
-export const RollingGallery: React.FC<RollingGalleryProps> = ({ items, speed = 35 }) => {
+export const RollingGallery: React.FC<RollingGalleryProps> = ({ items, speed = 35, tiltAngle = 0, direction = 'left'}) => {
   // Duplicating the items to fill out the scrolling track
   const duplicatedItems = [...items, ...items, ...items];
+  const initialX = direction === 'left' ? '0%' : '-33.3333%';
+  const animateX = direction === 'left' ? '-33.3333%' : '0%';
 
   if (items.length === 0) return null;
 
   return (
-    <div className="w-full overflow-hidden bg-surface-bg/30 py-18 block relative select-none z-20 min-h-[160px]">
+    <div className="w-full overflow-hidden bg-surface-bg/30 py-8 block relative select-none z-20 min-h-[160px]">
       <div 
-        className="transform -rotate-4 bg-surface-bg flex items-center h-[160px] sm:h-[200px]"
-        style={{ marginLeft: '-20%', width: '140%' }}
+        className="bg-surface-bg flex items-center h-[160px] sm:h-[200px]"
+        style={{ marginLeft: '-20%', width: '140%', transform:`rotate(${tiltAngle}deg)` }}
       >
         <motion.div
           className="flex flex-row whitespace-nowrap gap-2 py-4 pr-4"
-          initial={{ x: '0%' }}
-          animate={{ x: '-33.3333%' }}
+          initial={{ x: initialX }}
+          animate={{ x: animateX }}
           transition={{
             ease: "linear",
             duration: speed,
