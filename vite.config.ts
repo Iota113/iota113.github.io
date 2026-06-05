@@ -4,7 +4,7 @@ import path from 'path';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/v2/', 
+  base: '/', 
 
   plugins: [
     react(),

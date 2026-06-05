@@ -1,9 +1,9 @@
 {
-  "name": "react-example",
+  "name": "iota113.github.io",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://iota113.github.io/v2",
+  "homepage": "https://iota113.github.io",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
     "build": "vite build",

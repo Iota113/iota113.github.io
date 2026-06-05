@@ -154,7 +154,7 @@ export const Header: React.FC = () => {
               </div>
               
               <div className="flex flex-col items-center">
-                <div className="text-[10px] uppercase tracking-widest opacity-40 mb-1">v2 project</div>
+                <div className="text-[10px] uppercase tracking-widest opacity-40 mb-1">personal website</div>
                 <div className="text-xs font-sans opacity-60">4 Pages Planned • 2 Complete</div>
               </div>
             </div>

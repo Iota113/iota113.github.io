@@ -3,25 +3,23 @@
   <head>
     <meta charset="utf-8">
     <title>Redirecting...</title>
-    <script>
-      // 1. Get the current URL path that caused the 404 (e.g., "/v2/archive")
-      const currentPath = window.location.pathname;
-      
-      // 2. Define your GitHub repository name (this is your base)
-      const repoName = '/v2';
-      
-      // 3. Make sure the path actually belongs to this repo
-      if (currentPath.startsWith(repoName)) {
-        // Extract the specific route the user wanted (e.g., "/archive")
-        const route = currentPath.substring(repoName.length);
-        
-        // 4. Force a redirect to the HashRouter format: /v2/#/archive
-        // We also append window.location.search just in case there are ?query parameters
-        window.location.replace(repoName + '/#' + route + window.location.search);
-      } else {
-        // Fallback safety redirect to the home page
-        window.location.replace(repoName + '/#/');
-      }
+    <script type="text/javascript">
+      // Single Page Apps for GitHub Pages
+      // MIT License
+      // https://github.com/rafgraph/spa-github-pages
+      // This script checks to see if a redirect is present in the query string,
+      // converts it back into the correct url and adds it to the
+      // browser's history using window.history.replaceState.
+      var pathSegmentsToKeep = 0; // 0 for user pages (username.github.io)
+
+      var l = window.location;
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?p=' +
+        l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+        (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+        l.hash
+      );
     </script>
   </head>
   <body>
