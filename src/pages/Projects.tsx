@@ -1,6 +1,8 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { useSeason } from '../context/SeasonContext';
+import { ProjectCard } from '../components/ProjectCard';
+import { projects } from '../data/projects';
 
 export const Projects: React.FC = () => {
     const { season } = useSeason();
@@ -21,21 +23,13 @@ export const Projects: React.FC = () => {
                 {seasonalQuotes[season]}
             </p>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                {[1, 2].map((i) => (
-                    <motion.div 
-                        key={i}
-                        whileHover={{ y: -10 }}
-                        style={{ borderRadius: 'var(--radius-ui)' }}
-                        className="bg-surface-bg border-l-4 border-accent p-10 shadow-ui transition-all duration-700"
-                    >
-                        <span className="text-[10px] text-text-muted font-mono tracking-widest uppercase">Project 0{i}</span>
-                        <h2 className="text-2xl font-bold mt-2 mb-4 text-natural-text">Coming Soon</h2>
-                        <p className="text-text-muted leading-relaxed mb-6">
-                            This section is currently under development. I'm migrating my projects into this new minimalistic Monogatari framework.
-                        </p>
-                        <div className="h-[1px] w-full bg-natural-border" />
-                    </motion.div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {projects.map((project, index) => (
+                    <ProjectCard
+                        key={project.id}
+                        project={project}
+                        index={index}
+                    />
                 ))}
             </div>
         </div>

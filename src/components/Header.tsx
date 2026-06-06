@@ -220,7 +220,7 @@ export const Header: React.FC = () => {
               
               <div className="flex flex-col items-end">
                 <div className="text-[10px] uppercase tracking-widest opacity-40 mb-1">personal website</div>
-                <div className="text-xs font-sans opacity-60">4 Pages Planned • 3 Complete</div>
+                <div className="text-xs font-sans opacity-60">4 Pages Planned • 4 Complete</div>
               </div>
             </div>
           </motion.nav>

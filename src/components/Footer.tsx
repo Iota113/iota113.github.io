@@ -39,7 +39,7 @@ export const Footer: React.FC = () => {
       <div className="flex items-center gap-8 text-right mt-4 md:mt-0 text-natural-text">
         <div>
           <div className="text-[10px] uppercase tracking-widest opacity-60 mb-1">personal website</div>
-          <div className="text-xs font-sans opacity-80">4 Pages Planned • 3 Complete</div>
+          <div className="text-xs font-sans opacity-80">4 Pages Planned • 4 Complete</div>
         </div>
         <div className="w-10 h-10 rounded-full border border-natural-border flex items-center justify-center text-accent text-sm transition-colors duration-700 shadow-sm bg-surface-bg">
            <span>{seasonIcons[season]}</span>

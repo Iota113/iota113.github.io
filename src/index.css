@@ -1,12 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,500;1,300&family=Inter:wght@400;600&family=Space+Grotesk:wght@300;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@300;400;600;700&family=Josefin+Sans:wght@300;400;500;600;700;800&family=Quicksand:wght@300;400;500;600;700&family=Spectral:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Crimson Pro", serif;
-  --font-display: "Space Grotesk", sans-serif;
-  --font-mono: "JetBrains Mono", monospace;
-
+  --font-sans: "Quicksand", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Spectral", serif;
+  --font-display: "Josefin Sans", sans-serif;
+  --font-mono: "Azeret Mono", monospace;
+  
   --color-natural-bg: #FAF9F6;
   --color-natural-text: #2D2D2D;
   --color-natural-muted: #555555;
@@ -176,5 +176,110 @@
 @keyframes twinkle {
   0% { opacity: var(--base-opacity); transform: scale(1); box-shadow: none; }
   100% { opacity: 1; transform: scale(1.5); box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.8); }
+}
+
+/* ═══════════════════════════════════════════════════
+   Project Card Styles
+   ═══════════════════════════════════════════════════ */
+
+.project-card {
+  box-shadow: var(--shadow-ui);
+}
+
+.project-card:hover {
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+/* Tags */
+.project-tag {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  background: transparent;
+}
+
+/* Website link icon */
+.project-website-link {
+  color: var(--color-natural-text);
+}
+
+/* GitHub embed card — base */
+.github-embed-card {
+  background: var(--color-natural-bg);
+  border-color: var(--color-border);
+  color: var(--color-natural-text);
+}
+
+/* Image placeholder */
+.project-image-placeholder {
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+  background: var(--color-natural-bg);
+}
+
+/* ── Spring overrides ── */
+.theme-spring .project-card:hover {
+  box-shadow:
+    0 12px 40px rgba(232, 122, 144, 0.10),
+    0 4px 12px rgba(232, 122, 144, 0.06);
+}
+
+.theme-spring .project-tag {
+  background: rgba(232, 122, 144, 0.08);
+}
+
+.theme-spring .github-embed-card {
+  background: #FFFFFF;
+}
+
+/* ── Summer overrides ── */
+.theme-summer .project-card:hover {
+  box-shadow:
+    0 12px 40px rgba(77, 158, 58, 0.10),
+    0 4px 12px rgba(77, 158, 58, 0.06);
+}
+
+.theme-summer .project-tag {
+  background: rgba(77, 158, 58, 0.08);
+}
+
+.theme-summer .github-embed-card {
+  background: #FFFFFF;
+}
+
+/* ── Autumn overrides ── */
+.theme-autumn .project-card:hover {
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.40),
+    0 4px 16px rgba(200, 56, 12, 0.12);
+}
+
+.theme-autumn .project-tag {
+  background: rgba(200, 56, 12, 0.12);
+  border-color: rgba(200, 56, 12, 0.4);
+  color: #D4A07A;
+}
+
+.theme-autumn .github-embed-card {
+  background: #241C14;
+  border-color: rgba(61, 46, 32, 0.7);
+}
+
+/* ── Winter overrides ── */
+.theme-winter .project-card:hover {
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.50),
+    0 0 24px rgba(90, 188, 232, 0.08);
+}
+
+.theme-winter .project-tag {
+  background: rgba(90, 188, 232, 0.08);
+  border-color: rgba(90, 188, 232, 0.35);
+}
+
+.theme-winter .github-embed-card {
+  background: #0A1525;
+  border-color: rgba(30, 53, 80, 0.8);
 }
 

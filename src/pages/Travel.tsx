@@ -187,7 +187,7 @@ export const Travel: React.FC = () => {
         <div ref={pageRef} className="min-h-screen w-full text-natural-text flex flex-col items-center pb-16 font-sans overflow-hidden relative transition-colors duration-700">
 
             {/* --- HEADER SECTION --- */}
-            <section className="w-full pt-24 pb-12 px-4 md:px-8 relative overflow-hidden flex justify-center border-b border-natural-border/30">
+            <section className="w-full pt-12 pb-6 px-[10%] relative overflow-hidden flex justify-center border-b border-natural-border/30">
                 
                 {/* Parallax MP4 Video Background */}
                 <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
@@ -215,7 +215,7 @@ export const Travel: React.FC = () => {
                 </div>
 
                 {/* MASTER STATUS BANNER */}
-                <div className="w-full max-w-[1400px] xl:max-w-[85vw] z-10">
+                <div className="w-full z-10">
                     <div className="w-full bg-surface-bg/30 backdrop-blur-md border border-natural-border/30 shadow-2xl rounded-[var(--radius-ui)] p-4 md:p-6 flex flex-col gap-6 relative overflow-hidden">
                         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 w-full">
                             <div className="flex items-center gap-6">
@@ -321,7 +321,7 @@ export const Travel: React.FC = () => {
             </section>
 
             {/* --- MAIN CONTENT SECTION (PHOTO GRID) --- */}
-            <section className="w-full max-w-[1400px] xl:max-w-[85vw] z-10 flex flex-col gap-8 pt-12 px-4 md:px-0">
+            <section className="w-full px-[10%] z-10 flex flex-col gap-8 pt-12">
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-6">
                     <AnimatePresence mode="popLayout">
                         {filteredPhotos.map((photo) => {
@@ -344,13 +344,13 @@ export const Travel: React.FC = () => {
                                         setActivePhoto(photo);
                                         setActiveImageIndex(0);
                                     }}
-                                    className="group relative bg-surface-bg border border-natural-border hover:border-accent/50 rounded-[var(--radius-ui)] overflow-hidden cursor-pointer shadow-sm hover:shadow-ui transition-all duration-300 flex flex-col"
+                                    className="group relative bg-surface-bg border border-natural-border hover:border-accent/80 overflow-hidden cursor-pointer shadow-sm hover:shadow-ui transition-all duration-300 flex flex-col"
                                 >
-                                    <div className="aspect-[4/5] w-full bg-natural-bg relative overflow-hidden border-b border-natural-border/60">
+                                    <div className="aspect-[4/5] w-full bg-natural-bg relative overflow-hidden border-b border-natural-border/90">
                                         <img
                                             src={getImageUrl(getThumbnail(photo.additional_images))}
                                             alt={placeLabel}
-                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-115 [.group:not(:hover)_&]:duration-1500"
                                             loading="lazy"
                                         />
                                         {photo.is_cover && (
@@ -382,7 +382,7 @@ export const Travel: React.FC = () => {
             {/* --- INSPECT MODAL --- */}
             <AnimatePresence>
                 {activePhoto && (() => {
-                    const gallery = activePhoto.additional_images || [];
+                    const gallery = (activePhoto.additional_images || []).slice(1);
                     const viewportUrl = getImageUrl(gallery[activeImageIndex]);
                     const loc = locations[activePhoto.city];
                     const cityLabel = loc ? (lang === 'zh' ? loc.city_zh : loc.city_en) : activePhoto.city;

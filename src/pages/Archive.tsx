@@ -221,33 +221,34 @@ const MediaCard: React.FC<{ item: ArchiveMedia }> = ({ item }) => {
 
   return (
     <motion.article 
-      layout
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="group relative"
+    layout
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, margin: "-100px" }}
+    transition={{ duration: 0.6, ease: "easeOut" }}
+    className="group relative"
+  >
+    <div 
+      style={{ borderRadius: 'var(--radius-ui)' }}
+      className="relative aspect-[3/4] overflow-hidden bg-surface-bg border border-natural-border p-2 transition-all duration-500 shadow-ui group-hover:scale-[1.02]"
     >
-      <div 
-        style={{ borderRadius: 'var(--radius-ui)' }}
-        className="relative aspect-[3/4] overflow-hidden bg-surface-bg border border-natural-border p-2 transition-all duration-500 shadow-ui group-hover:scale-[1.02]"
-      >
-         <div className="relative h-full w-full overflow-hidden" style={{ borderRadius: 'calc(var(--radius-ui) - 4px)' }}>
-            <img 
-              src={imageUrl} 
-              alt={item.title}
-              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-natural-text/80 opacity-0 transition-opacity duration-500 group-hover:opacity-100 flex items-center justify-center p-6 text-center backdrop-blur-sm">
-               <div className="transform translate-y-4 transition-transform duration-500 group-hover:translate-y-0 text-natural-bg scale-90 group-hover:scale-100">
-                  <h4 className="text-lg font-serif italic mb-2 group-hover:text-accent">{item.title}</h4>
-                  <span className="text-[8px] uppercase tracking-[0.2em] opacity-80">{item.type}</span>
-               </div>
-            </div>
-         </div>
+      <div className="relative h-full w-full overflow-hidden" style={{ borderRadius: 'calc(var(--radius-ui) - 4px)' }}>
+        <img 
+          src={imageUrl} 
+          alt={item.title}
+          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 transition-opacity duration-400 group-hover:opacity-100" />
+        <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 opacity-0 transition-all duration-400 group-hover:translate-y-0 group-hover:opacity-100">
+          <h4 className="text-sm font-serif italic text-white mb-1">{item.title}</h4>
+          <span className="text-[8px] uppercase tracking-[0.2em] text-white/70">{item.type}</span>
+        </div>
       </div>
-      <div className="mt-4 flex justify-between items-baseline px-1 text-natural-text">
-        <span className="text-[9px] uppercase tracking-[0.2em] opacity-60">{item.type}</span>
-        <span className="text-[8px] serif-italic opacity-50">{item.displayYear}</span>
-      </div>
-    </motion.article>
+    </div>
+    <div className="mt-4 flex justify-between items-baseline px-1 text-natural-text">
+      <span className="text-[9px] uppercase tracking-[0.2em] opacity-60">{item.type}</span>
+      <span className="text-[8px] serif-italic opacity-50">{item.displayYear}</span>
+    </div>
+  </motion.article>
   );
 };
