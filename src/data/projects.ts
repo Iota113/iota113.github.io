@@ -35,7 +35,7 @@ export const projects: Project[] = [
     description:
       'A task management chatbot inspired by the epoynomous character from Genshin Impact.',
     tags: ['Java', 'Gradle'],
-    websiteUrl: 'https://hoyo-buddy.seria.moe',
+    websiteUrl: 'https://iota113.github.io/Sandrone/',
     github: {
       owner: 'Iota113',
       repo: 'Sandrone',
@@ -48,7 +48,7 @@ export const projects: Project[] = [
     description:
       'A web app for building yield curves and other financial data as part of summer internship.',
     tags: ['Python', 'JavaScript', 'Render'],
-    websiteUrl: 'https://fuwari.vercel.app',
+    websiteUrl: 'https://interest-rate-calculator-dgu1.onrender.com/',
     github: {
       owner: 'Iota113',
       repo: 'Interest-Rate-Calculator',
