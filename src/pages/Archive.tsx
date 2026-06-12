@@ -54,7 +54,7 @@ export const Archive: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen bg-natural-bg text-natural-text">
+    <div className="min-h-screen text-natural-text">
       {/* Hero Section */}
       <section ref={heroRef} className="px-[5%] py-16 md:py-24 relative overflow-hidden">
         
@@ -201,8 +201,8 @@ export const Archive: React.FC = () => {
                   </div>
                   <div className="grid grid-cols-3 md:grid-cols-3 xl:grid-cols-5 gap-x-4 gap-y-8">
                     <AnimatePresence mode="popLayout">
-                      {groupedItems[year].map((item) => (
-                        <MediaCard key={item.id} item={item} />
+                      {groupedItems[year].map((item, index) => (
+                        <MediaCard key={item.id} item={item} index={index} />
                       ))}
                     </AnimatePresence>
                   </div>
@@ -216,18 +216,22 @@ export const Archive: React.FC = () => {
   );
 };
 
-const MediaCard: React.FC<{ item: ArchiveMedia }> = ({ item }) => {
+const MediaCard: React.FC<{ item: ArchiveMedia; index: number }> = ({ item, index }) => {
   const imageUrl = `${ARCHIVE_URL}${item.image_filename}`;
 
   return (
     <motion.article 
-    layout
-    initial={{ opacity: 0, y: 30 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, margin: "-100px" }}
-    transition={{ duration: 0.6, ease: "easeOut" }}
-    className="group relative"
-  >
+      layout
+      initial={{ opacity: 0, y: 45, scale: 0.92, rotate: index % 2 === 0 ? 2 : -2 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ 
+        duration: 0.6, 
+        ease: [0.16, 1, 0.3, 1], 
+        delay: (index % 5) * 0.08 
+      }}
+      className="group relative"
+    >
     <div 
       style={{ borderRadius: 'var(--radius-ui)' }}
       className="relative aspect-[3/4] overflow-hidden bg-surface-bg border border-natural-border p-2 transition-all duration-500 shadow-ui group-hover:scale-[1.02]"

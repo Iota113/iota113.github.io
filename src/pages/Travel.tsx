@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import { supabase, TRAVEL_URL } from '../services/supabase';
 import { useSeason } from '../context/SeasonContext';
+import { TiltedCard } from '../components/TiltedCard';
 import skirkVideoUrl from '../../videos/skirk-star-odyssey.mp4';
 
 interface TravelLocation {
@@ -324,7 +325,7 @@ export const Travel: React.FC = () => {
             <section className="w-full px-[10%] z-10 flex flex-col gap-8 pt-12">
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-6">
                     <AnimatePresence mode="popLayout">
-                        {filteredPhotos.map((photo) => {
+                        {filteredPhotos.map((photo, index) => {
                             const loc = locations[photo.city];
                             const cityLabel = loc ? (lang === 'zh' ? loc.city_zh : loc.city_en) : photo.city;
                             const regionLabel = loc ? (lang === 'zh' ? loc.region_zh : loc.region_en) : '';
@@ -333,18 +334,23 @@ export const Travel: React.FC = () => {
                             const placeLabel = lang === 'zh' ? (photo.place_zh || photo.place) : photo.place;
 
                             return (
-                                <motion.div
+                                <TiltedCard
                                     layout
                                     key={photo.id}
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.9 }}
-                                    transition={{ duration: 0.3 }}
+                                    initial={{ opacity: 0, y: 50, scale: 0.92 }}
+                                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                                    viewport={{ once: true, margin: "-40px" }}
+                                    exit={{ opacity: 0, y: 30, scale: 0.92 }}
+                                    transition={{
+                                        duration: 0.5,
+                                        delay: (index % 6) * 0.05,
+                                        ease: [0.25, 0.8, 0.25, 1]
+                                    }}
                                     onClick={() => {
                                         setActivePhoto(photo);
                                         setActiveImageIndex(0);
                                     }}
-                                    className="group relative bg-surface-bg border border-natural-border hover:border-accent/80 overflow-hidden cursor-pointer shadow-sm hover:shadow-ui transition-all duration-300 flex flex-col"
+                                    className="bg-surface-bg border border-natural-border hover:border-accent/80 shadow-sm hover:shadow-ui transition-all duration-300 flex flex-col"
                                 >
                                     <div className="aspect-[4/5] w-full bg-natural-bg relative overflow-hidden border-b border-natural-border/90">
                                         <img
@@ -372,7 +378,7 @@ export const Travel: React.FC = () => {
                                             {placeLabel}
                                         </h3>
                                     </div>
-                                </motion.div>
+                                </TiltedCard>
                             );
                         })}
                     </AnimatePresence>

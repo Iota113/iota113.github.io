@@ -6,82 +6,95 @@
   --font-serif: "Spectral", serif;
   --font-display: "Josefin Sans", sans-serif;
   --font-mono: "Azeret Mono", monospace;
-  
+
   --color-natural-bg: #FAF9F6;
   --color-natural-text: #2D2D2D;
   --color-natural-muted: #555555;
   --color-natural-border: rgba(45, 45, 45, 0.1);
   --color-natural-footer: #F2F1EC;
-  
-  --color-accent: #4E87B2; 
+
+  --color-accent: #4E87B2;
 }
 
 .theme-spring {
-  --color-natural-bg:     #FFF8F9;
-  --color-surface-bg:     #FCF5F7;
-  --color-natural-text:   #3A2E32;
-  --color-text-muted:     #856B74;
-  --color-accent:         #E87A90;
-  --color-secondary:      #DFC94A;
-  --color-border:         #F0E1E5;
+  --color-natural-bg: #FFF8F9;
+  --color-surface-bg: #FCF5F7;
+  --color-natural-text: #3A2E32;
+  --color-text-muted: #856B74;
+  --color-accent: #E87A90;
+  --color-secondary: #DFC94A;
+  --color-border: #F0E1E5;
 
-  --radius-ui:  20px;
-  --shadow-ui:  0 4px 20px rgba(232, 122, 144, 0.12);
+  --radius-ui: 20px;
+  --shadow-ui: 0 4px 20px rgba(232, 122, 144, 0.12);
 }
 
 .theme-summer {
-  --color-natural-bg:     #F0FAF0;
-  --color-surface-bg:     #FFFFFF;
-  --color-natural-text:   #1A2E1A;
-  --color-text-muted:     #3D6030;
-  --color-accent:         #4D9E3A;
-  --color-secondary:      #A8D4E8;
-  --color-border:         #C0E0B8;
+  --color-natural-bg: #F0FAF0;
+  --color-surface-bg: #FFFFFF;
+  --color-natural-text: #1A2E1A;
+  --color-text-muted: #3D6030;
+  --color-accent: #4D9E3A;
+  --color-secondary: #A8D4E8;
+  --color-border: #C0E0B8;
 
-  --radius-ui:  6px;
-  --shadow-ui:  0 2px 8px rgba(77, 158, 58, 0.10);
+  --radius-ui: 6px;
+  --shadow-ui: 0 2px 8px rgba(77, 158, 58, 0.10);
 }
 
 .theme-autumn {
-  --color-natural-bg:     #1E1812;
-  --color-surface-bg:     #2A2018;
-  --color-natural-text:   #F2E7DC;
-  --color-text-muted:     #A8988F;
-  --color-accent:         #C8380C;
-  --color-secondary:      #E5A93C;
-  --color-border:         #3D2E20;
+  --color-natural-bg: #181716;
+  --color-surface-bg: #232120;
+  --color-natural-text: #ECEAE6;
+  --color-text-muted: #A29E97;
+  --color-accent: #D13E2E;
+  --color-secondary: #DF9A67;
+  --color-border: #353230;
 
-  --radius-ui:  12px;
-  --shadow-ui:  0 6px 16px rgba(0, 0, 0, 0.30);
+  --radius-ui: 12px;
+  --shadow-ui: 0 6px 16px rgba(0, 0, 0, 0.30);
 }
 
 .theme-winter {
-  --color-natural-bg:     #07111E;
-  --color-surface-bg:     #0E1C30;
-  --color-natural-text:   #C8E0F0;
-  --color-text-muted:     #6A8CAA;
-  --color-accent:         #5ABCE8;
-  --color-secondary:      #E8C840;
-  --color-border:         #1E3550;
+  --color-natural-bg: #07111E;
+  --color-surface-bg: #0E1C30;
+  --color-natural-text: #C8E0F0;
+  --color-text-muted: #6A8CAA;
+  --color-accent: #5ABCE8;
+  --color-secondary: #E8C840;
+  --color-border: #1E3550;
 
-  --radius-ui:  2px;
-  --shadow-ui:  0 0 20px rgba(90, 188, 232, 0.10);
+  --radius-ui: 2px;
+  --shadow-ui: 0 0 20px rgba(90, 188, 232, 0.10);
 }
 
 .theme-winter body,
 .theme-winter .page-bg {
   background-image:
-    radial-gradient(circle, rgba(90,188,232,0.055) 1px, transparent 1px),
-    radial-gradient(circle, rgba(90,188,232,0.03)  1px, transparent 1px);
+    radial-gradient(circle, rgba(90, 188, 232, 0.055) 1px, transparent 1px),
+    radial-gradient(circle, rgba(90, 188, 232, 0.03) 1px, transparent 1px);
   background-size: 48px 48px, 24px 24px;
   background-position: 0 0, 12px 12px;
 }
 
 @keyframes snap-flash {
-  0%   { opacity: 0; }
-  18%  { opacity: 1; }         /* hits white at ~20ms */
-  42%  { opacity: 1; }         /* holds briefly — the "snap" moment */
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+  }
+
+  18% {
+    opacity: 1;
+  }
+
+  /* hits white at ~20ms */
+  42% {
+    opacity: 1;
+  }
+
+  /* holds briefly — the "snap" moment */
+  100% {
+    opacity: 0;
+  }
 }
 
 .snap-flash {
@@ -98,7 +111,10 @@
     font-feature-settings: "ss01", "ss02", "cv01", "cv02";
   }
 
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     @apply font-display tracking-tight text-natural-text transition-colors duration-700 ease-in-out;
   }
 }
@@ -114,8 +130,15 @@
 
 /* UI Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fade {
@@ -124,18 +147,14 @@
 
 /* Ethereal Fading Edge Mask */
 .vignette-mask {
-  -webkit-mask-image: radial-gradient(
-    ellipse 85% 90% at 50% 50%,
-    rgba(0, 0, 0, 1) 60%,
-    rgba(0, 0, 0, 0.4) 85%,
-    transparent 100%
-  );
-  mask-image: radial-gradient(
-    ellipse 85% 90% at 50% 50%,
-    rgba(0, 0, 0, 1) 60%,
-    rgba(0, 0, 0, 0.4) 85%,
-    transparent 100%
-  );
+  -webkit-mask-image: radial-gradient(ellipse 85% 90% at 50% 50%,
+      rgba(0, 0, 0, 1) 60%,
+      rgba(0, 0, 0, 0.4) 85%,
+      transparent 100%);
+  mask-image: radial-gradient(ellipse 85% 90% at 50% 50%,
+      rgba(0, 0, 0, 1) 60%,
+      rgba(0, 0, 0, 0.4) 85%,
+      transparent 100%);
 }
 
 /* Travel Page */
@@ -143,11 +162,11 @@
   .bg-midnight-gradient {
     background: radial-gradient(circle at top center, #1a2a42 0%, #080d17 100%);
   }
-  
+
   .glow-text {
     text-shadow: 0 0 10px rgba(147, 197, 253, 0.5);
   }
-  
+
   .glow-button {
     box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
   }
@@ -174,8 +193,17 @@
 }
 
 @keyframes twinkle {
-  0% { opacity: var(--base-opacity); transform: scale(1); box-shadow: none; }
-  100% { opacity: 1; transform: scale(1.5); box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.8); }
+  0% {
+    opacity: var(--base-opacity);
+    transform: scale(1);
+    box-shadow: none;
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1.5);
+    box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.8);
+  }
 }
 
 /* ═══════════════════════════════════════════════════
@@ -252,18 +280,18 @@
 .theme-autumn .project-card:hover {
   box-shadow:
     0 16px 48px rgba(0, 0, 0, 0.40),
-    0 4px 16px rgba(200, 56, 12, 0.12);
+    0 4px 16px color-mix(in srgb, var(--color-accent) 12%, transparent);
 }
 
 .theme-autumn .project-tag {
-  background: rgba(200, 56, 12, 0.12);
-  border-color: rgba(200, 56, 12, 0.4);
-  color: #D4A07A;
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  border-color: color-mix(in srgb, var(--color-accent) 40%, transparent);
+  color: var(--color-secondary);
 }
 
 .theme-autumn .github-embed-card {
-  background: #241C14;
-  border-color: rgba(61, 46, 32, 0.7);
+  background: var(--color-surface-bg);
+  border-color: color-mix(in srgb, var(--color-border) 70%, transparent);
 }
 
 /* ── Winter overrides ── */
@@ -282,4 +310,3 @@
   background: #0A1525;
   border-color: rgba(30, 53, 80, 0.8);
 }
-

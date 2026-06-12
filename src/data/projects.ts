@@ -1,6 +1,6 @@
 import animeAwardsImg from '../../images/projects/anime-awards.webp';
 import sandroneImg from '../../images/projects/sandrone.webp';
-import interestRateCalculatorImg from '../../images/projects/interest-rate-calculator.webp';
+import swapCalculatorImg from '../../images/projects/swap-calculator.webp';
 
 export interface Project {
   id: string;
@@ -43,16 +43,16 @@ export const projects: Project[] = [
     showcaseImage: sandroneImg
   },
   {
-    id: 'interest-rate-calculator',
-    name: 'Interest Rate Calculator',
+    id: 'swap-calculator',
+    name: 'Swap Calculator',
     description:
-      'A web app for building yield curves and other financial data as part of summer internship.',
+      'A web app for building swap curves and calculating financial data like deltas and projected cashflow.',
     tags: ['Python', 'JavaScript', 'Render'],
     websiteUrl: 'https://interest-rate-calculator-dgu1.onrender.com/',
     github: {
-      owner: 'Iota113',
-      repo: 'Interest-Rate-Calculator',
+      owner: 'podledges',
+      repo: 'Swap-Calculator',
     },
-    showcaseImage: interestRateCalculatorImg
+    showcaseImage: swapCalculatorImg
   },
 ];
