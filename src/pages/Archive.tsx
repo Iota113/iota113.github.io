@@ -1,6 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import { supabase, ArchiveMedia, ARCHIVE_URL } from '../services/supabase';
+import { ArchiveModal, hasReview } from '../components/ArchiveModal';
 import botwMasterTrials from '../../images/botw-master-trials.webp';
 
 export const Archive: React.FC = () => {
@@ -8,6 +10,29 @@ export const Archive: React.FC = () => {
   const [filter, setFilter] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
+  // The open review lives in the URL (?review=<slug>, or the id when no slug is set)
+  // so it can be linked to directly
+  const [searchParams, setSearchParams] = useSearchParams();
+  const reviewKey = searchParams.get('review');
+  const selectedItem = reviewKey
+    ? items.find((item) => (item.slug === reviewKey || item.id === reviewKey) && hasReview(item)) ?? null
+    : null;
+
+  const openModal = useCallback((item: ArchiveMedia) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set('review', item.slug || item.id);
+      return next;
+    });
+  }, [setSearchParams]);
+
+  const closeModal = useCallback(() => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.delete('review');
+      return next;
+    }, { replace: true });
+  }, [setSearchParams]);
 
   // Target reference for the hero section parallax
   const heroRef = useRef<HTMLDivElement>(null);
@@ -202,7 +227,12 @@ export const Archive: React.FC = () => {
                   <div className="grid grid-cols-3 md:grid-cols-3 xl:grid-cols-5 gap-x-4 gap-y-8">
                     <AnimatePresence mode="popLayout">
                       {groupedItems[year].map((item, index) => (
-                        <MediaCard key={item.id} item={item} index={index} />
+                        <MediaCard
+                          key={item.id}
+                          item={item}
+                          index={index}
+                          onOpen={hasReview(item) ? () => openModal(item) : undefined}
+                        />
                       ))}
                     </AnimatePresence>
                   </div>
@@ -212,12 +242,15 @@ export const Archive: React.FC = () => {
           )}
         </main>
       </div>
+
+      <ArchiveModal item={selectedItem} onClose={closeModal} />
     </div>
   );
 };
 
-const MediaCard: React.FC<{ item: ArchiveMedia; index: number }> = ({ item, index }) => {
+const MediaCard: React.FC<{ item: ArchiveMedia; index: number; onOpen?: () => void }> = ({ item, index, onOpen }) => {
   const imageUrl = `${ARCHIVE_URL}${item.image_filename}`;
+  const clickable = Boolean(onOpen);
 
   return (
     <motion.article 
@@ -230,7 +263,19 @@ const MediaCard: React.FC<{ item: ArchiveMedia; index: number }> = ({ item, inde
         ease: [0.16, 1, 0.3, 1], 
         delay: (index % 5) * 0.08 
       }}
-      className="group relative"
+      className={`group relative ${clickable ? 'cursor-pointer' : ''}`}
+      {...(clickable && {
+        onClick: onOpen,
+        role: 'button',
+        tabIndex: 0,
+        'aria-label': `Read review of ${item.title}`,
+        onKeyDown: (e: React.KeyboardEvent) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onOpen?.();
+          }
+        },
+      })}
     >
     <div 
       style={{ borderRadius: 'var(--radius-ui)' }}
@@ -242,6 +287,14 @@ const MediaCard: React.FC<{ item: ArchiveMedia; index: number }> = ({ item, inde
           alt={item.title}
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
+        {clickable && (
+          <span
+            className="absolute top-2 right-2 z-10 bg-black/70 text-white/90 backdrop-blur-sm border border-white/10 rounded-full px-2 py-0.5 text-[8px] font-mono uppercase tracking-[0.2em] group-hover:text-accent transition-colors"
+            aria-hidden="true"
+          >
+            Review
+          </span>
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 transition-opacity duration-400 group-hover:opacity-100" />
         <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 opacity-0 transition-all duration-400 group-hover:translate-y-0 group-hover:opacity-100">
           <h4 className="text-sm font-serif italic text-white mb-1">{item.title}</h4>

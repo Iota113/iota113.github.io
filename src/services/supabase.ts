@@ -17,6 +17,8 @@ export interface ArchiveMedia {
     displayYear: string;
     image_filename: string;
     created_at: string;
+    review?: string | null;
+    slug?: string | null;
 }
 
 // Define the specific structures for the JSONB blocks
